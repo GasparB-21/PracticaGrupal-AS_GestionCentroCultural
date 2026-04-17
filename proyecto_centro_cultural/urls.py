@@ -19,5 +19,6 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('/', include('app_gestion_centro_cultural.urls')),
+    #Incluir una pagina home 'home'
+    path('home/', include('app_gestion_centro_cultural.urls')),
 ]

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Listado de usuarios</title>
+    </head>
+    <body>                
+        <!-- Título -->
+        <h1>Listado de usuarios registrados en el sistema</h1>
+
+        <!-- Card contenedora -->
+        {% if usuarios %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Edad</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for usuario in usuarios %}
+                        <tr>
+                            <td>{{ usuario.id }}</td>
+
+                            <td>
+                                <a href="{% url 'filtrar_usuario' usuario.id %}">
+                                    {{ usuario.nombre }}
+                                </a>
+                            </td>
+
+                            <td>{{ usuario.edad }}</td>
+
+                            <td>{{ usuario.email }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        {% else %}
+            <h3>No hay usuarios registrados en el sistema.</h3>
+        {% endif %}
+    </body>
+</html>
