@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.urls import reverse
 from ..models import *
 from ..forms import UsuarioForm
 
@@ -58,15 +59,21 @@ def editar_usuario_id(request, id):
         form = UsuarioForm(instance=usuario)
         return render(request, 'app_gestion_centro_cultural/formulario_registro.html', {'titulo': 'Editar usuario', 'form': form})
     
-# Eliminar usuario
-def eliminar_usuario_id(request, id):
-    #Comprobamos que el metodo sea POST, para evitar que se pueda eliminar un usuario simplemente accediendo a la url
-    if request.method != "POST":
-        return JsonResponse({"error": "Método no permitido"}, status=405)
-    
+# Confirmar eliminar usuario
+def confirmar_eliminar_usuario(request, id):
     try:
         usuario = Usuario.objects.get(id=id)
-        usuario.delete()
-        return redirect('listar_usuarios')
     except Usuario.DoesNotExist:
         return render(request, 'app_gestion_centro_cultural/usuarios/info_usuario.html', {'usuario': None})
+    
+    if request.method == 'POST':
+        if 'confirmar' in request.POST:
+            usuario.delete()
+            return redirect('listar_usuarios')
+        else:
+            # Volver a la página anterior
+            referer = request.META.get('HTTP_REFERER', reverse('listar_usuarios'))
+            return redirect(referer)
+    
+    referer = request.META.get('HTTP_REFERER', reverse('listar_usuarios'))
+    return render(request, 'app_gestion_centro_cultural/usuarios/confirmar_eliminar_usuario.html', {'usuario': usuario, 'referer': referer})

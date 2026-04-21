@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Información del monitor</title>
+    </head>
+
+    <body>
+        {% if monitor %}
+            <h1>Información del monitor</h1>
+
+            <!-- Card monitor -->
+            <div>
+                <h3><strong>Nombre:</strong> {{ monitor.nombre }}</h3>
+
+                <p><strong>Especialización:</strong> {{ monitor.especializacion }}</p>
+
+                <p><strong>Actividades Asignadas:</strong> {{ monitor.numero_actividades_asignadas }}</p>
+
+                <a href="{% url 'editar_monitor' monitor.id %}" style="text-decoration: none;">✏️</a>
+                <a href="{% url 'confirmar_eliminar_monitor' monitor.id %}" style="text-decoration: none;">🗑️</a>
+            </div>
+        {% else %}
+            <h1>Monitor no encontrado</h1>
+        {% endif %}
+    </body>
+</html>

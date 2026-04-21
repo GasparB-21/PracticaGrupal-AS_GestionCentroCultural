@@ -3,44 +3,42 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Listado de usuarios</title>
+        <title>Listado de monitores</title>
     </head>
     <body>                
         <!-- Título -->
-        <h1>Listado de usuarios registrados en el sistema</h1>
+        <h1>Listado de monitores registrados en el sistema</h1>
 
         <!-- Card contenedora -->
-        {% if usuarios %}
+        {% if monitores %}
             <table>
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
-                        <th>Edad</th>
-                        <th>Email</th>
-                        <th>Teléfono</th>
+                        <th>Especialización</th>
+                        <th>Actividades Asignadas</th>
                         <th>Editar</th>
                         <th>Eliminar</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    {% for usuario in usuarios %}
+                    {% for monitor in monitores %}
                         <tr>
-                            <td>{{ usuario.id }}</td>
+                            <td>{{ monitor.id }}</td>
                             <td>
-                                <a href="{% url 'filtrar_usuario' usuario.id %}">
-                                    {{ usuario.nombre }}
+                                <a href="{% url 'filtrar_monitor' monitor.id %}">
+                                    {{ monitor.nombre }}
                                 </a>
                             </td>
-                            <td>{{ usuario.edad }}</td>
-                            <td>{{ usuario.email }}</td>
-                            <td>{{ usuario.telefono }}</td>
+                            <td>{{ monitor.especializacion }}</td>
+                            <td>{{ monitor.numero_actividades_asignadas }}</td>
                             <td>
-                                <a href="{% url 'editar_usuario' usuario.id %}" style="text-decoration: none;">✏️</a>
+                                <a href="{% url 'editar_monitor' monitor.id %}" style="text-decoration: none;">✏️</a>
                             </td>
                             <td>
-                                <a href="{% url 'confirmar_eliminar_usuario' usuario.id %}" style="text-decoration: none;">🗑️</a>
+                                <a href="{% url 'confirmar_eliminar_monitor' monitor.id %}" style="text-decoration: none;">🗑️</a>
                             </td>
                         </tr>
                     {% endfor %}
@@ -48,7 +46,7 @@
             </table>
 
         {% else %}
-            <h3>No hay usuarios registrados en el sistema.</h3>
+            <h3>No hay monitores registrados en el sistema.</h3>
         {% endif %}
     </body>
 </html>
