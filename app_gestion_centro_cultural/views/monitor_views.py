@@ -25,7 +25,7 @@ def formulario_registro_monitor(request):
             return redirect('listar_monitores')
     else:
         form = MonitorForm()
-        return render(request, 'app_gestion_centro_cultural/formulario_registro.html', {'titulo': 'Página de registro de monitores', 'form': form})
+        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Página de registro de monitores', 'form': form})
 
 # Filtrar monitor por id
 def filtrar_monitor_id(request, id):

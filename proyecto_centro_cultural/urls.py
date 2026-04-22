@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from app_gestion_centro_cultural.views.usuario_views import listar_usuarios
+from app_gestion_centro_cultural.views.monitor_views import listar_monitores
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #Incluir una pagina home 'home'
     path('home/', include('app_gestion_centro_cultural.urls')),
 ]

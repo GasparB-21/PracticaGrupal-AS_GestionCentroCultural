@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
-from ..models import *
+from ..models import Usuario
 from ..forms import UsuarioForm
 
 # Consulta de usuarios
@@ -24,9 +24,10 @@ def formulario_registro_usuario(request):
         if form.is_valid():
             form.save()
             return redirect('listar_usuarios')
+        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Página de registro de usuarios', 'form': form})
     else:
         form = UsuarioForm()
-        return render(request, 'app_gestion_centro_cultural/formulario_registro.html', {'titulo': 'Página de registro de usuarios', 'form': form})
+        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Página de registro de usuarios', 'form': form})
 
 # Filtrar usuario por id
 def filtrar_usuario_id(request, id):
