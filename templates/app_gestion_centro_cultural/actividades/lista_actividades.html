@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Listado de actividades</title>
+    </head>
+    <body>
+        <a href="{% url 'home_administracion' %}" style="display: inline-block; margin-bottom: 12px; padding: 8px 12px; background-color: #4b5563; color: #ffffff; text-decoration: none; border-radius: 6px;">
+            ← Volver
+        </a>
+        <h1>Listado de actividades registradas en el sistema</h1>
+
+        {% if actividades %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Horario</th>
+                        <th>Duración</th>
+                        <th>Plazas</th>
+                        <th>Monitor</th>
+                        <th>Sala principal</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for actividad in actividades %}
+                        <tr>
+                            <td>{{ actividad.id }}</td>
+                            <td>
+                                <a href="{% url 'filtrar_actividad' actividad.id %}">
+                                    {{ actividad.nombre }}
+                                </a>
+                            </td>
+                            <td>{{ actividad.get_tipo_display }}</td>
+                            <td>{{ actividad.horario }}</td>
+                            <td>{{ actividad.duracion }} min</td>
+                            <td>{{ actividad.plazas_disponibles }}</td>
+                            <td>{{ actividad.monitor.nombre }}</td>
+                            <td>
+                                {% if actividad.sala_principal %}
+                                    {{ actividad.sala_principal.nombre }}
+                                {% else %}
+                                    Sin sala
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'editar_actividad' actividad.id %}" style="text-decoration: none;">✏️</a>
+                            </td>
+                            <td>
+                                <form method="POST" action="{% url 'confirmar_eliminar_actividad' actividad.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" name="eliminar" value="si">🗑️</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <a href="nuevo/" style="display: inline-block; margin-bottom: 16px; padding: 10px 14px; background-color: #2563eb; color: #ffffff; text-decoration: none; border-radius: 6px;">
+                Nueva actividad
+            </a>
+        {% else %}
+            <h3>No hay actividades registradas en el sistema.</h3>
+            <a href="nuevo/" style="display: inline-block; margin-bottom: 16px; padding: 10px 14px; background-color: #2563eb; color: #ffffff; text-decoration: none; border-radius: 6px;">
+                Nueva actividad
+            </a>
+        {% endif %}
+    </body>
+</html>

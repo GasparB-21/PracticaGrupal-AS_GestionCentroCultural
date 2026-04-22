@@ -6,8 +6,8 @@
 </head>
 <body>
     <h1>Confirmar eliminación</h1>
-    <p>¿Estás seguro de que quieres eliminar al monitor "{{ monitor.nombre }}"?</p>
-    <form method="POST" action="{% url 'confirmar_eliminar_monitor' monitor.id %}">
+    <p>¿Estás seguro de que quieres eliminar la actividad "{{ actividad.nombre }}"?</p>
+    <form method="POST" action="{% url 'confirmar_eliminar_actividad' actividad.id %}">
         {% csrf_token %}
         <button type="submit" name="confirmar" value="si">Sí, eliminar</button>
     </form>

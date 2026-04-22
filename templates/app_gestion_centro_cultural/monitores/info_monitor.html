@@ -7,6 +7,9 @@
 
     <body>
         {% if monitor %}
+            <a href="{% url 'listar_monitores' %}" style="display: inline-block; margin-bottom: 12px; padding: 8px 12px; background-color: #4b5563; color: #ffffff; text-decoration: none; border-radius: 6px;">
+                ← Volver
+            </a>
             <h1>Información del monitor</h1>
 
             <!-- Card monitor -->
@@ -18,7 +21,10 @@
                 <p><strong>Actividades Asignadas:</strong> {{ monitor.numero_actividades_asignadas }}</p>
 
                 <a href="{% url 'editar_monitor' monitor.id %}" style="text-decoration: none;">✏️</a>
-                <a href="{% url 'confirmar_eliminar_monitor' monitor.id %}" style="text-decoration: none;">🗑️</a>
+                <form method="POST" action="{% url 'confirmar_eliminar_monitor' monitor.id %}">
+                    {% csrf_token %}
+                    <button type="submit" name="eliminar" value="si">🗑️</button>
+                </form>
             </div>
         {% else %}
             <h1>Monitor no encontrado</h1>

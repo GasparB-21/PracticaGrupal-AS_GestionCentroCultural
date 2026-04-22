@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Información de la sala</title>
+    </head>
+    <body>
+        {% if sala %}
+            <a href="{% url 'listar_salas' %}" style="display: inline-block; margin-bottom: 12px; padding: 8px 12px; background-color: #4b5563; color: #ffffff; text-decoration: none; border-radius: 6px;">
+                ← Volver
+            </a>
+            <h1>Información de la sala</h1>
+
+            <div>
+                <h3><strong>Nombre:</strong> {{ sala.nombre }}</h3>
+                <p><strong>Capacidad:</strong> {{ sala.capacidad }}</p>
+                <p><strong>Ubicación:</strong> {{ sala.ubicacion }}</p>
+                <p>
+                    <strong>Responsable:</strong>
+                    {% if sala.responsable %}
+                        {{ sala.responsable.nombre }}
+                    {% else %}
+                        Sin responsable
+                    {% endif %}
+                </p>
+
+                <a href="{% url 'editar_sala' sala.id %}" style="text-decoration: none;">✏️</a>
+                <form method="POST" action="{% url 'confirmar_eliminar_sala' sala.id %}">
+                    {% csrf_token %}
+                    <button type="submit" name="eliminar" value="si">🗑️</button>
+                </form>
+            </div>
+        {% else %}
+            <h1>Sala no encontrada</h1>
+        {% endif %}
+    </body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Información de la actividad</title>
+    </head>
+    <body>
+        {% if actividad %}
+            <a href="{% url 'listar_actividades' %}" style="display: inline-block; margin-bottom: 12px; padding: 8px 12px; background-color: #4b5563; color: #ffffff; text-decoration: none; border-radius: 6px;">
+                ← Volver
+            </a>
+            <h1>Información de la actividad</h1>
+
+            <div>
+                <h3><strong>Nombre:</strong> {{ actividad.nombre }}</h3>
+                <p><strong>Tipo:</strong> {{ actividad.get_tipo_display }}</p>
+                <p><strong>Horario:</strong> {{ actividad.horario }}</p>
+                <p><strong>Descripción:</strong> {{ actividad.descripcion }}</p>
+                <p><strong>Duración:</strong> {{ actividad.duracion }} minutos</p>
+                <p><strong>Plazas disponibles:</strong> {{ actividad.plazas_disponibles }}</p>
+                <p><strong>Monitor:</strong> {{ actividad.monitor.nombre }}</p>
+                <p>
+                    <strong>Sala principal:</strong>
+                    {% if actividad.sala_principal %}
+                        {{ actividad.sala_principal.nombre }}
+                    {% else %}
+                        Sin sala principal
+                    {% endif %}
+                </p>
+
+                <a href="{% url 'editar_actividad' actividad.id %}" style="text-decoration: none;">✏️</a>
+                <form method="POST" action="{% url 'confirmar_eliminar_actividad' actividad.id %}">
+                    {% csrf_token %}
+                    <button type="submit" name="eliminar" value="si">🗑️</button>
+                </form>
+            </div>
+        {% else %}
+            <h1>Actividad no encontrada</h1>
+        {% endif %}
+    </body>
+</html>

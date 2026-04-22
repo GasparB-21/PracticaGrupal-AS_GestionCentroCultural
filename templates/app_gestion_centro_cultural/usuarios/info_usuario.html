@@ -7,6 +7,9 @@
 
     <body>
         {% if usuario %}
+            <a href="{% url 'listar_usuarios' %}" style="display: inline-block; margin-bottom: 12px; padding: 8px 12px; background-color: #4b5563; color: #ffffff; text-decoration: none; border-radius: 6px;">
+                ← Volver
+            </a>
             <h1>Información del usuario</h1>
 
             <!-- Card usuario -->

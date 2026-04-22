@@ -5,6 +5,14 @@ from django.urls import reverse
 from ..models import Usuario
 from ..forms import UsuarioForm
 
+# NOTAS DESARROLLO:
+# En el método de eliminación se fuerza a que se tenga que acceder mediante un POST para evitar que se eliminen usuarios 
+# por equivocación al accecder erroneamente a la URL. Esto se debe a que en esta acción no hay que interactuar con un 
+# input para confirmar la acción, como si pasa al registrar y editar usuarios.
+#
+# Ahora mismo solo se fuerza la navegacion mediante la interfaz para la eliminación de usuarios.
+# Podría añadirse autenticacion para el admin
+
 # Consulta de usuarios
 def listar_usuarios(request):
     if request.method != "GET":
@@ -16,6 +24,9 @@ def listar_usuarios(request):
 
 # Registar un nuevo usuario
 def formulario_registro_usuario(request):
+    referer = request.META.get('HTTP_REFERER', reverse('listar_usuarios'))
+
+
     #Comprobamos si se esta accediendo al formulario o si ya se ha mandado con la información
     if request.method == 'POST':
         #Creamos un form con los datos recibidos
@@ -24,10 +35,10 @@ def formulario_registro_usuario(request):
         if form.is_valid():
             form.save()
             return redirect('listar_usuarios')
-        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Página de registro de usuarios', 'form': form})
+        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Página de registro de usuarios', 'form': form, 'referer': referer})
     else:
         form = UsuarioForm()
-        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Página de registro de usuarios', 'form': form})
+        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Página de registro de usuarios', 'form': form, 'referer': referer})
 
 # Filtrar usuario por id
 def filtrar_usuario_id(request, id):
@@ -49,6 +60,8 @@ def editar_usuario_id(request, id):
         #Si no existe mostramos una página con el mensaje de error pertinente
         return render(request, 'app_gestion_centro_cultural/usuarios/info_usuario.html', {'usuario': None})
     
+    referer = request.META.get('HTTP_REFERER', reverse('filtrar_usuario', args=[id]))
+
     #Si el usuario existe, comprobamos si se ha eniviado la info o si se esta accediendo al formulario para rellenar
     if request.method == 'POST':
         # Como en este caso estamos editamdo hacemos uso de instance: objeto del modelo que queremos editar.
@@ -56,9 +69,10 @@ def editar_usuario_id(request, id):
         if form.is_valid():
             form.save()
             return redirect('listar_usuarios')
+        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Editar usuario', 'form': form, 'referer': referer})
     else:
         form = UsuarioForm(instance=usuario)
-        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Editar usuario', 'form': form})
+        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Editar usuario', 'form': form, 'referer': referer})
     
 # Confirmar eliminar usuario
 #

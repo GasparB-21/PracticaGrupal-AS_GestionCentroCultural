@@ -3,45 +3,50 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Listado de monitores</title>
+        <title>Listado de salas</title>
     </head>
-    <body>                
-        <!-- Título -->
+    <body>
         <a href="{% url 'home_administracion' %}" style="display: inline-block; margin-bottom: 12px; padding: 8px 12px; background-color: #4b5563; color: #ffffff; text-decoration: none; border-radius: 6px;">
             ← Volver
         </a>
-        <h1>Listado de monitores registrados en el sistema</h1>
+        <h1>Listado de salas registradas en el sistema</h1>
 
-        <!-- Card contenedora -->
-        {% if monitores %}
+        {% if salas %}
             <table>
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
-                        <th>Especialización</th>
-                        <th>Actividades Asignadas</th>
+                        <th>Capacidad</th>
+                        <th>Ubicación</th>
+                        <th>Responsable</th>
                         <th>Editar</th>
                         <th>Eliminar</th>
                     </tr>
                 </thead>
-
                 <tbody>
-                    {% for monitor in monitores %}
+                    {% for sala in salas %}
                         <tr>
-                            <td>{{ monitor.id }}</td>
+                            <td>{{ sala.id }}</td>
                             <td>
-                                <a href="{% url 'filtrar_monitor' monitor.id %}">
-                                    {{ monitor.nombre }}
+                                <a href="{% url 'filtrar_sala' sala.id %}">
+                                    {{ sala.nombre }}
                                 </a>
                             </td>
-                            <td>{{ monitor.especializacion }}</td>
-                            <td>{{ monitor.numero_actividades_asignadas }}</td>
+                            <td>{{ sala.capacidad }}</td>
+                            <td>{{ sala.ubicacion }}</td>
                             <td>
-                                <a href="{% url 'editar_monitor' monitor.id %}" style="text-decoration: none;">✏️</a>
+                                {% if sala.responsable %}
+                                    {{ sala.responsable.nombre }}
+                                {% else %}
+                                    Sin responsable
+                                {% endif %}
                             </td>
                             <td>
-                                <form method="POST" action="{% url 'confirmar_eliminar_monitor' monitor.id %}">
+                                <a href="{% url 'editar_sala' sala.id %}" style="text-decoration: none;">✏️</a>
+                            </td>
+                            <td>
+                                <form method="POST" action="{% url 'confirmar_eliminar_sala' sala.id %}">
                                     {% csrf_token %}
                                     <button type="submit" name="eliminar" value="si">🗑️</button>
                                 </form>
@@ -52,11 +57,13 @@
             </table>
 
             <a href="nuevo/" style="display: inline-block; margin-bottom: 16px; padding: 10px 14px; background-color: #2563eb; color: #ffffff; text-decoration: none; border-radius: 6px;">
-                Nuevo monitor
+                Nueva sala
             </a>
-
         {% else %}
-            <h3>No hay monitores registrados en el sistema.</h3>
+            <h3>No hay salas registradas en el sistema.</h3>
+            <a href="nuevo/" style="display: inline-block; margin-bottom: 16px; padding: 10px 14px; background-color: #2563eb; color: #ffffff; text-decoration: none; border-radius: 6px;">
+                Nueva sala
+            </a>
         {% endif %}
     </body>
 </html>
