@@ -11,6 +11,11 @@
         {% csrf_token %}
         <button type="submit" name="confirmar" value="si">Sí, eliminar</button>
     </form>
-    <a href="{{ referer }}">No, volver</a>
+    <a href="{{ referer }}">No, cancelar</a>
+
+    <!--form method="POST" action="{% url 'confirmar_eliminar_usuario' usuario.id %}">
+        {% csrf_token %}
+        <button type="submit" name="cancelar" value="si">No, volver</button>
+    </form-->
 </body>
 </html>

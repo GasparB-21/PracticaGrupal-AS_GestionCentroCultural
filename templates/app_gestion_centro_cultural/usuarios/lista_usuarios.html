@@ -40,7 +40,10 @@
                                 <a href="{% url 'editar_usuario' usuario.id %}" style="text-decoration: none;">✏️</a>
                             </td>
                             <td>
-                                <a href="{% url 'confirmar_eliminar_usuario' usuario.id %}" style="text-decoration: none;">🗑️</a>
+                                <form method="POST" action="{% url 'confirmar_eliminar_usuario' usuario.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" name="eliminar" value="si">🗑️</button>
+                                </form>
                             </td>
                         </tr>
                     {% endfor %}

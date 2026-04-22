@@ -20,7 +20,11 @@
                 <p><strong>Teléfono:</strong> {{ usuario.telefono }}</p>
 
                 <a href="{% url 'editar_usuario' usuario.id %}" style="text-decoration: none;">✏️</a>
-                <a href="{% url 'confirmar_eliminar_usuario' usuario.id %}" style="text-decoration: none;">🗑️</a>
+                
+                <form method="POST" action="{% url 'confirmar_eliminar_usuario' usuario.id %}">
+                    {% csrf_token %}
+                    <button type="submit" name="eliminar" value="si">🗑️</button>
+                </form>
             </div>
         {% else %}
             <h1>Usuario no encontrado</h1>
