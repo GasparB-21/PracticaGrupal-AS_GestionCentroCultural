@@ -18,8 +18,11 @@ def listar_usuarios(request):
     if request.method != "GET":
         return JsonResponse({"error": "Método no permitido"}, status=405)
     
-    listar_usuarios = Usuario.objects.all()
-    dirUsuarios = {'usuarios': listar_usuarios}
+    lista_usuarios = Usuario.objects.all()
+    actividad_id = request.GET.get('actividad')
+    if actividad_id:
+        lista_usuarios = lista_usuarios.filter(actividades__id=actividad_id)
+    dirUsuarios = {'usuarios': lista_usuarios}
     return render(request, 'app_gestion_centro_cultural/usuarios/lista_usuarios.html', dirUsuarios)
 
 # Registar un nuevo usuario

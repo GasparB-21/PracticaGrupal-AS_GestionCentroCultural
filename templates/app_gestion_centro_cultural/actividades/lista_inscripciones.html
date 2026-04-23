@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Listado de usuarios</title>
+    </head>
+    <body>                
+        <!-- Título -->
+        <a href="{% url 'listar_actividades' %}" style="display: inline-block; margin-bottom: 12px; padding: 8px 12px; background-color: #4b5563; color: #ffffff; text-decoration: none; border-radius: 6px;">
+            ← Volver
+        </a>
+        <h1>Listado de usuarios inscritos en la actividad {{ actividad.nombre }}</h1>
+
+        <!-- Card contenedora -->
+        {% if usuarios %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Edad</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Anular inscripcion</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for usuario in usuarios %}
+                        <tr>
+                            <td>{{ usuario.id }}</td>
+                            <td>{{ usuario.nombre }}</td>
+                            <td>{{ usuario.edad }}</td>
+                            <td>{{ usuario.email }}</td>
+                            <td>{{ usuario.telefono }}</td>
+                            <td>
+                                <form method="POST" action="{% url 'eliminar_inscripcion' actividad.id usuario.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" name="eliminar" value="si">🗑️</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <h3>No hay usuarios inscritos en la actividad {{ actividad.nombre }}</h3>
+        {% endif %}
+    </body>
+</html>

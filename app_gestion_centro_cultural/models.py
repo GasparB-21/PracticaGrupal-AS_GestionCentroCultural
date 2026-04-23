@@ -6,7 +6,7 @@ class Usuario(models.Model):
     nombre = models.CharField(max_length=120)
     edad = models.PositiveIntegerField(validators=[MaxValueValidator(130)])
     email = models.EmailField(unique=True)
-    telefono = models.CharField(max_length=20)
+    telefono = models.PositiveIntegerField(validators=[MaxValueValidator(999999999)])
 
     def __str__(self) -> str:
         return self.nombre

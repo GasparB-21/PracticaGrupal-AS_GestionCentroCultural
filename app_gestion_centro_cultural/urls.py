@@ -40,5 +40,8 @@ urlpatterns = [
     path('actividades/nuevo/', formulario_registro_actividad, name='registrar_actividades'),
     path('actividades/<int:id>/', filtrar_actividad_id, name='filtrar_actividad'),
     path('actividades/<int:id>/editar/', editar_actividad_id, name='editar_actividad'),
-    path('actividades/<int:id>/eliminar/', confirmar_eliminar_actividad, name='confirmar_eliminar_actividad')
+    path('actividades/<int:id>/eliminar/', confirmar_eliminar_actividad, name='confirmar_eliminar_actividad'),
+    path('actividades/<int:id>/inscripciones/', listar_inscripciones, name='listar_inscripciones'),
+    path('actividades/<int:id>/inscribir/', inscribir_usuario_actividad, name='inscribir_usuario_actividad'),
+    path('actividades/<int:actividad_id>/inscripciones/<int:usuario_id>/eliminar/', eliminar_inscripcion, name='eliminar_inscripcion')
 ]

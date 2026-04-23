@@ -1,5 +1,5 @@
 from django import forms
-from .models import Usuario, Monitor, Sala, Actividad
+from .models import Usuario, Monitor, Sala, Actividad, Inscripcion
 
 class UsuarioForm(forms.ModelForm):
     class Meta:
@@ -22,3 +22,12 @@ class ActividadForm(forms.ModelForm):
     class Meta:
         model = Actividad
         fields = '__all__'
+        widgets = {
+            # Esto convierte el input de texto en un selector de fecha y hora real
+            'horario': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
+
+class InscripcionForm(forms.ModelForm):
+    class Meta:
+        model = Inscripcion
+        fields = ['usuario']
