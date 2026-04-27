@@ -4,6 +4,7 @@ from .views.usuario_views import *
 from .views.monitor_views import *
 from .views.sala_views import *
 from .views.actividad_views import *
+from .views.inscripcion_view import *
 
 urlpatterns = [
     # HOME
@@ -41,6 +42,9 @@ urlpatterns = [
     path('actividades/<int:id>/', filtrar_actividad_id, name='filtrar_actividad'),
     path('actividades/<int:id>/editar/', editar_actividad_id, name='editar_actividad'),
     path('actividades/<int:id>/eliminar/', confirmar_eliminar_actividad, name='confirmar_eliminar_actividad'),
+    
+    #Inscripciones
+    #Consulta de inscripciones de una actividad
     path('actividades/<int:id>/inscripciones/', listar_inscripciones, name='listar_inscripciones'),
     path('actividades/<int:id>/inscribir/', inscribir_usuario_actividad, name='inscribir_usuario_actividad'),
     path('actividades/<int:actividad_id>/inscripciones/<int:usuario_id>/eliminar/', eliminar_inscripcion, name='eliminar_inscripcion')
