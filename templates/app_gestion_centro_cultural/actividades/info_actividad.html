@@ -1,41 +1,111 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <title>Información de la actividad</title>
-    </head>
-    <body>
-        {% if actividad %}
-            <a href="{% url 'listar_actividades' %}" style="display: inline-block; margin-bottom: 12px; padding: 8px 12px; background-color: #4b5563; color: #ffffff; text-decoration: none; border-radius: 6px;">
-                ← Volver
-            </a>
-            <h1>Información de la actividad</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Información de la actividad</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
+    
+    <style>
+        body { 
+            background-color: #f8f9fa; 
+            color: #333;
+            padding-top: 40px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
 
-            <div>
-                <h3><strong>Nombre:</strong> {{ actividad.nombre }}</h3>
-                <p><strong>Tipo:</strong> {{ actividad.get_tipo_display }}</p>
-                <p><strong>Horario:</strong> {{ actividad.horario }}</p>
-                <p><strong>Descripción:</strong> {{ actividad.descripcion }}</p>
-                <p><strong>Duración:</strong> {{ actividad.duracion }} minutos</p>
-                <p><strong>Plazas disponibles:</strong> {{ actividad.plazas_disponibles }}</p>
-                <p><strong>Monitor:</strong> {{ actividad.monitor.nombre }}</p>
-                <p>
-                    <strong>Sala principal:</strong>
-                    {% if actividad.sala_principal %}
-                        {{ actividad.sala_principal.nombre }}
-                    {% else %}
-                        Sin sala principal
-                    {% endif %}
-                </p>
+        h1 { 
+            font-weight: 800; 
+            letter-spacing: -1px; 
+            color: #212529; 
+            margin-bottom: 1.5rem; 
+        }
+        
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: #6c757d;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            transition: background 0.2s;
+        }
 
-                <a href="{% url 'editar_actividad' actividad.id %}" style="text-decoration: none;">✏️</a>
-                <form method="POST" action="{% url 'confirmar_eliminar_actividad' actividad.id %}">
+        .btn-volver:hover { 
+            background-color: #5a6268; 
+        }
+
+        .table-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 20px;
+            max-width: 600px;
+        }
+
+        .btn-action {
+            background: none;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .btn-action:hover { 
+            background-color: #f8f9fa; 
+        }
+    </style>
+</head>
+<body class="container">
+    {% if actividad %}
+        <a href="{% url 'listar_actividades' %}" class="btn-volver">← Volver</a>
+        <h1>Información de la actividad</h1>
+
+        <div class="table-container shadow-sm">
+            <h3><strong>Nombre:</strong> {{ actividad.nombre }}</h3>
+            <p class="mt-3"><strong>Tipo:</strong> {{ actividad.get_tipo_display }}</p>
+            <p><strong>Horario:</strong> {{ actividad.horario|date:"l H:i" }}</p>
+            <p><strong>Descripción:</strong> {{ actividad.descripcion }}</p>
+            <p><strong>Duración:</strong> {{ actividad.duracion }} minutos</p>
+            <p><strong>Plazas disponibles:</strong> {{ actividad.plazas_disponibles }}</p>
+            <p><strong>Monitor:</strong> {{ actividad.monitor.nombre }}</p>
+            <p><strong>Sala principal:</strong> 
+                {% if actividad.sala_principal %}
+                    {{ actividad.sala_principal.nombre }}
+                {% else %}
+                    Sin sala principal
+                {% endif %}
+            </p>
+            <p><strong>Salas secundarias:</strong> 
+                {% if actividad.salas_secundarias.all %}
+                    {% for sala in actividad.salas_secundarias.all %}
+                        {{ sala.nombre }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                {% else %}
+                    Sin salas secundarias
+                {% endif %}
+            </p>
+
+            <div class="mt-4 pt-3 border-top">
+                <a href="{% url 'editar_actividad' actividad.id %}" class="btn-action">✏️ Editar</a>
+                
+                <form method="POST" action="{% url 'confirmar_eliminar_actividad' actividad.id %}" class="d-inline">
                     {% csrf_token %}
-                    <button type="submit" name="eliminar" value="si">🗑️</button>
+                    <button type="submit" name="eliminar" value="si" class="btn-action">🗑️ Eliminar</button>
                 </form>
             </div>
-        {% else %}
-            <h1>Actividad no encontrada</h1>
-        {% endif %}
-    </body>
+        </div>
+    {% else %}
+        <div class="alert alert-info">Actividad no encontrada</div>
+    {% endif %}
+</body>
 </html>

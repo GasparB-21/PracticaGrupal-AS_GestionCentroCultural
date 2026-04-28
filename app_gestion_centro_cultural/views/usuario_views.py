@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 from ..models import Usuario
 from ..forms import UsuarioForm
+from ..form_error_adapter import FormErrorAdapter
 
 # NOTAS DESARROLLO:
 # En el método de eliminación se fuerza a que se tenga que acceder mediante un POST para evitar que se eliminen usuarios 
@@ -19,6 +20,12 @@ def listar_usuarios(request):
         return JsonResponse({"error": "Método no permitido"}, status=405)
     
     lista_usuarios = Usuario.objects.all()
+
+    # Filtrar por ID
+    u_id = request.GET.get('id')
+    if u_id:
+        lista_usuarios = lista_usuarios.filter(id__icontains=u_id)
+
     actividad_id = request.GET.get('actividad')
     if actividad_id:
         lista_usuarios = lista_usuarios.filter(actividades__id=actividad_id)
@@ -38,7 +45,7 @@ def formulario_registro_usuario(request):
         if form.is_valid():
             form.save()
             return redirect('listar_usuarios')
-        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Página de registro de usuarios', 'form': form, 'referer': referer})
+        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Página de registro de usuarios', 'form': form, 'referer': referer, 'error_adapter': FormErrorAdapter(form)})
     else:
         form = UsuarioForm()
         return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Página de registro de usuarios', 'form': form, 'referer': referer})
@@ -72,7 +79,7 @@ def editar_usuario_id(request, id):
         if form.is_valid():
             form.save()
             return redirect('listar_usuarios')
-        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Editar usuario', 'form': form, 'referer': referer})
+        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Editar usuario', 'form': form, 'referer': referer, 'error_adapter': FormErrorAdapter(form)})
     else:
         form = UsuarioForm(instance=usuario)
         return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Editar usuario', 'form': form, 'referer': referer})

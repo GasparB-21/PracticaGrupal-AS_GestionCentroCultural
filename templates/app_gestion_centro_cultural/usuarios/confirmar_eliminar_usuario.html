@@ -1,21 +1,88 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirmar eliminación</title>
-</head>
-<body>
-    <h1>Confirmar eliminación</h1>
-    <p>¿Estás seguro de que quieres eliminar al usuario "{{ usuario.nombre }}"?</p>
-    <form method="POST" action="{% url 'confirmar_eliminar_usuario' usuario.id %}">
-        {% csrf_token %}
-        <button type="submit" name="confirmar" value="si">Sí, eliminar</button>
-    </form>
-    <a href="{{ referer }}">No, cancelar</a>
+    <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
+    
+    <style>
+        body { 
+            background-color: #f8f9fa; 
+            color: #333;
+            padding-top: 40px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
 
-    <!--form method="POST" action="{% url 'confirmar_eliminar_usuario' usuario.id %}">
-        {% csrf_token %}
-        <button type="submit" name="cancelar" value="si">No, volver</button>
-    </form-->
+        h1 { 
+            font-weight: 800; 
+            letter-spacing: -1px; 
+            color: #212529; 
+            margin-bottom: 1.5rem; 
+        }
+
+        .table-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 20px;
+            max-width: 600px;
+        }
+
+        .btn-confirmar {
+            display: inline-block;
+            background-color: #dc3545;
+            color: white !important;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .btn-confirmar:hover {
+            background-color: #bb2d3b;
+        }
+
+        .btn-cancelar {
+            display: inline-block;
+            background-color: #6c757d;
+            color: white !important;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            margin-left: 10px;
+            transition: background 0.2s;
+        }
+
+        .btn-cancelar:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body class="container">
+    <h1>Confirmar eliminación</h1>
+
+    <div class="table-container shadow-sm">
+        <p class="fs-5 mb-4">
+            ¿Estás seguro de que quieres eliminar al usuario <strong>"{{ usuario.nombre }}"</strong>?
+        </p>
+
+        <form method="POST" action="{% url 'confirmar_eliminar_usuario' usuario.id %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" name="confirmar" value="si" class="btn-confirmar">
+                Sí, eliminar
+            </button>
+        </form>
+        
+        <a href="{{ referer }}" class="btn-cancelar">
+            No, cancelar
+        </a>
+    </div>
 </body>
 </html>

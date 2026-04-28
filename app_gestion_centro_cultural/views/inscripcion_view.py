@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from ..models import Actividad, Usuario
 from ..forms import  InscripcionForm
+from ..form_error_adapter import FormErrorAdapter
 
 # Consultar inscripciones de una actividad
 def listar_inscripciones(request, id):

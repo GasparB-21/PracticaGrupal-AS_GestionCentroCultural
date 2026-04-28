@@ -1,51 +1,133 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Listado de usuarios</title>
-    </head>
-    <body>                
-        <!-- Título -->
-        <a href="{% url 'listar_actividades' %}" style="display: inline-block; margin-bottom: 12px; padding: 8px 12px; background-color: #4b5563; color: #ffffff; text-decoration: none; border-radius: 6px;">
-            ← Volver
-        </a>
-        <h1>Listado de usuarios inscritos en la actividad {{ actividad.nombre }}</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios Inscritos</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
+    
+    <style>
+        body { 
+            background-color: #f8f9fa; 
+            color: #333;
+            padding-top: 40px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
 
-        <!-- Card contenedora -->
-        {% if usuarios %}
-            <table>
+        h1 { 
+            font-weight: 800; 
+            letter-spacing: -1px; 
+            color: #212529;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            transition: background 0.2s;
+        }
+        .btn-volver:hover { background-color: #5a6268; color: white; }
+
+        .table-container {
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 20px;
+        }
+
+        .table thead th {
+            background-color: #fcfcfc;
+            border-bottom: 2px solid #f0f2f5;
+            color: #6c757d;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 15px;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f0f2f5;
+        }
+
+        .btn-action {
+            background: none;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .btn-action:hover { background-color: #f8f9fa; }
+
+        /* Estilo para resaltar el nombre de la actividad en el título */
+        .text-actividad {
+            color: #0d6efd;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+    </style>
+</head>
+<body class="container">
+
+    <a href="{% url 'listar_actividades' %}" class="btn-volver">
+        ← Volver a actividades
+    </a>
+
+    <h1>Usuarios inscritos en <span class="text-actividad">{{ actividad.nombre }}</span></h1>
+
+    {% if usuarios %}
+        <div class="table-container shadow-sm">
+            <table class="table mb-0">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
-                        <th>Edad</th>
+                        <th class="text-center">Edad</th>
                         <th>Email</th>
                         <th>Teléfono</th>
-                        <th>Anular inscripcion</th>
+                        <th class="text-center">Anular</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     {% for usuario in usuarios %}
                         <tr>
-                            <td>{{ usuario.id }}</td>
-                            <td>{{ usuario.nombre }}</td>
-                            <td>{{ usuario.edad }}</td>
-                            <td>{{ usuario.email }}</td>
+                            <td class="text-muted small">#{{ usuario.id }}</td>
+                            <td class="fw-bold">{{ usuario.nombre }}</td>
+                            <td class="text-center">{{ usuario.edad }}</td>
+                            <td class="text-muted">{{ usuario.email }}</td>
                             <td>{{ usuario.telefono }}</td>
-                            <td>
-                                <form method="POST" action="{% url 'eliminar_inscripcion' actividad.id usuario.id %}">
+                            <td class="text-center">
+                                <form method="POST" action="{% url 'eliminar_inscripcion' actividad.id usuario.id %}" class="d-inline">
                                     {% csrf_token %}
-                                    <button type="submit" name="eliminar" value="si">🗑️</button>
+                                    <button type="submit" name="eliminar" value="si" class="btn-action" title="Anular Inscripción">
+                                        🗑️
+                                    </button>
                                 </form>
                             </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
-        {% else %}
-            <h3>No hay usuarios inscritos en la actividad {{ actividad.nombre }}</h3>
-        {% endif %}
-    </body>
+        </div>
+    {% else %}
+        <div class="alert alert-info border-0 shadow-sm" role="alert">
+            <h4 class="alert-heading">Sin inscripciones</h4>
+            <p class="mb-0">Actualmente no hay usuarios inscritos en la actividad <strong>{{ actividad.nombre }}</strong>.</p>
+        </div>
+    {% endif %}
+
+    <script src="{% static 'bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+</body>
 </html>

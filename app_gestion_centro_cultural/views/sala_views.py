@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.urls import reverse
 from ..models import Sala
 from ..forms import SalaForm
+from ..form_error_adapter import FormErrorAdapter
 
 
 # Consulta de salas
@@ -11,6 +12,12 @@ def listar_salas(request):
         return JsonResponse({"error": "Método no permitido"}, status=405)
 
     salas = Sala.objects.all()
+
+    # Filtro por ID
+    s_id = request.GET.get('id')
+    if s_id and int(s_id) >= 0:
+        salas = salas.filter(id__icontains=s_id)
+
     return render(
         request,
         "app_gestion_centro_cultural/salas/lista_salas.html",
@@ -30,7 +37,7 @@ def formulario_registro_sala(request):
         return render(
             request,
             "app_gestion_centro_cultural/shared/formulario_registro.html",
-            {"titulo": "Página de registro de salas", "form": form, "referer": referer},
+            {"titulo": "Página de registro de salas", "form": form, "referer": referer, "error_adapter": FormErrorAdapter(form)},
         )
 
     form = SalaForm()
@@ -76,7 +83,7 @@ def editar_sala_id(request, id):
         return render(
             request,
             "app_gestion_centro_cultural/shared/formulario_registro.html",
-            {"titulo": "Editar sala", "form": form, "referer": referer},
+            {"titulo": "Editar sala", "form": form, "referer": referer, "error_adapter": FormErrorAdapter(form)},
         )
 
     form = SalaForm(instance=sala)

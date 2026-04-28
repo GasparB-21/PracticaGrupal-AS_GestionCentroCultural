@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.urls import reverse
 from ..models import Actividad
 from ..forms import ActividadForm
+from ..form_error_adapter import FormErrorAdapter
 
 
 # Consulta de actividades
@@ -11,6 +12,12 @@ def listar_actividades(request):
         return JsonResponse({"error": "Método no permitido"}, status=405)
 
     actividades = Actividad.objects.all()
+
+    # Filtrar por ID
+    a_id = request.GET.get('id')
+    if a_id:
+        actividades = actividades.filter(id__icontains=a_id)
+
     tipo = request.GET.get("tipo")
     if tipo:
         actividades = actividades.filter(tipo=tipo)
@@ -37,7 +44,7 @@ def formulario_registro_actividad(request):
         return render(
             request,
             "app_gestion_centro_cultural/shared/formulario_registro.html",
-            {"titulo": "Página de registro de actividades", "form": form, "referer": referer},
+            {"titulo": "Página de registro de actividades", "form": form, "referer": referer, "error_adapter": FormErrorAdapter(form)},
         )
 
     form = ActividadForm()
@@ -89,7 +96,7 @@ def editar_actividad_id(request, id):
         return render(
             request,
             "app_gestion_centro_cultural/shared/formulario_registro.html",
-            {"titulo": "Editar actividad", "form": form, "referer": referer},
+            {"titulo": "Editar actividad", "form": form, "referer": referer, "error_adapter": FormErrorAdapter(form)},
         )
 
     form = ActividadForm(instance=actividad)
