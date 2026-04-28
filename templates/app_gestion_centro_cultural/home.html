@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Área de administración</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
+    
+    <style>
+        body { 
+            background-color: #f8f9fa; 
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            color: #333;
+        }
+
+        .admin-container {
+            text-align: center;
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+        }
+
+        h1 { 
+            font-weight: 800; 
+            letter-spacing: -1.5px; 
+            color: #212529;
+            margin-bottom: 0.5rem;
+        }
+
+        h3 { 
+            font-weight: 300; 
+            color: #6c757d; 
+            margin-bottom: 2.5rem;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+        }
+
+        ul { 
+            list-style: none; 
+            padding: 0; 
+            margin: 0 auto;
+        }
+
+        li { 
+            margin-bottom: 15px; 
+        }
+
+        /* Botones minimalistas */
+        li a { 
+            display: block;
+            padding: 16px;
+            background: white;
+            color: #0d6efd;
+            text-decoration: none;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        li a:hover {
+            background-color: #ffffff;
+            color: #0a58ca;
+            transform: translateY(-3px);
+            border-color: #0d6efd;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-container">
+        <h1>Área de administración</h1>
+        <h3>Gestionar</h3>
+
+        <ul>
+            <li><a href="{% url 'listar_usuarios' %}">Usuarios</a></li>
+            <li><a href="{% url 'listar_monitores' %}">Monitores</a></li>
+            <li><a href="{% url 'listar_salas' %}">Salas</a></li>
+            <li><a href="{% url 'listar_actividades' %}">Actividades</a></li>
+        </ul>
+    </div>
+
+    <script src="{% static 'bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

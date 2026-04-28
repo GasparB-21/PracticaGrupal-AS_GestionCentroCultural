@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de salas</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
+
+    <style>
+        body { 
+            background-color: #f8f9fa; 
+            color: #333;
+            padding-top: 40px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        h1 { 
+            font-weight: 800; 
+            letter-spacing: -1px; 
+            color: #212529;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            transition: background 0.2s;
+        }
+        .btn-volver:hover { background-color: #5a6268; color: white; }
+
+        .table-container {
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 20px;
+        }
+
+        .table thead th {
+            background-color: #fcfcfc;
+            border-bottom: 2px solid #f0f2f5;
+            color: #6c757d;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 15px;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f0f2f5;
+        }
+
+        .btn-action {
+            background: none;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .btn-action:hover { background-color: #f8f9fa; }
+
+        .btn-nuevo {
+            display: inline-block;
+            background-color: #0d6efd;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-nuevo:hover { background-color: #0b5ed7; color: white; transform: translateY(-2px); }
+    </style>
+</head>
+
+<body class="container">
+
+    <a href="{% url 'home_administracion' %}" class="btn-volver">
+        ← Volver al inicio
+    </a>
+
+    <h1>Listado de salas registradas en el sistema</h1>
+
+    {% if salas %}
+        <div class="table-container shadow-sm">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Capacidad</th>
+                        <th>Ubicación</th>
+                        <th>Responsable</th>
+                        <th class="text-center">Editar</th>
+                        <th class="text-center">Eliminar</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for sala in salas %}
+                        <tr>
+                            <td class="text-muted small">#{{ sala.id }}</td>
+
+                            <td>
+                                <a href="{% url 'filtrar_sala' sala.id %}" class="text-decoration-none fw-bold">
+                                    {{ sala.nombre }}
+                                </a>
+                            </td>
+
+                            <td class="text-center">{{ sala.capacidad }}</td>
+
+                            <td class="text-muted">{{ sala.ubicacion }}</td>
+
+                            <td>
+                                {% if sala.responsable %}
+                                    {{ sala.responsable.nombre }}
+                                {% else %}
+                                    <span class="text-muted">Sin responsable</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-center">
+                                <a href="{% url 'editar_sala' sala.id %}" class="btn-action" title="Editar">✏️</a>
+                            </td>
+
+                            <td class="text-center">
+                                <form method="POST" action="{% url 'confirmar_eliminar_sala' sala.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" name="eliminar" value="si" class="btn-action" title="Eliminar">🗑️</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <a href="nuevo/" class="btn-nuevo shadow-sm">
+            + Nueva sala
+        </a>
+
+    {% else %}
+        <div class="alert alert-info border-0 shadow-sm" role="alert">
+            <h4 class="alert-heading">Sin registros</h4>
+            <p class="mb-0">No hay salas registradas en el sistema.</p>
+        </div>
+
+        <a href="nuevo/" class="btn-nuevo">
+            Crear primera sala
+        </a>
+    {% endif %}
+
+    <script src="{% static 'bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

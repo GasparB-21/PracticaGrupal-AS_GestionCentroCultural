@@ -1,0 +1,196 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de actividades</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
+    
+    <style>
+        body { 
+            background-color: #f8f9fa; 
+            color: #333;
+            padding-top: 40px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        h1 { 
+            font-weight: 800; 
+            letter-spacing: -1px; 
+            color: #212529;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            transition: background 0.2s;
+        }
+        .btn-volver:hover { background-color: #5a6268; color: white; }
+ 
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .table-container {
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 20px;
+            overflow-x: auto; /* Para que no se rompa si hay muchas columnas */
+        }
+
+        .table thead th {
+            background-color: #fcfcfc;
+            border-bottom: 2px solid #f0f2f5;
+            color: #6c757d;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 15px;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f0f2f5;
+        }
+
+        .btn-action {
+            background: none;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            text-decoration: none; /* Para los enlaces que parecen botones */
+            color: inherit;
+            transition: background 0.2s;
+        }
+        .btn-action:hover { background-color: #f8f9fa; color: inherit; }
+
+        .btn-nuevo {
+            display: inline-block;
+            background-color: #0d6efd;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-nuevo:hover { background-color: #0b5ed7; color: white; transform: translateY(-2px); }
+    </style>
+</head>
+<body class="container">
+
+    <a href="{% url 'home_administracion' %}" class="btn-volver">
+        ← Volver al inicio
+    </a>
+
+    <h1>Listado de actividades</h1>
+
+    <section class="filter-section shadow-sm">
+        <form method="GET" action="{% url 'listar_actividades' %}" class="d-flex align-items-center gap-3 w-100">
+            <label for="tipo" class="fw-bold small mb-0">Tipo:</label>
+            <select name="tipo" id="tipo" class="form-select form-select-sm w-auto">
+                <option value="" {% if not request.GET.tipo %}selected{% endif %}>Todos</option>
+                <option value="DANZA" {% if request.GET.tipo == "DANZA" %}selected{% endif %}>Danza</option>
+                <option value="TEATRO" {% if request.GET.tipo == "TEATRO" %}selected{% endif %}>Teatro</option>
+                <option value="MUSICA" {% if request.GET.tipo == "MUSICA" %}selected{% endif %}>Música</option>
+                <option value="PINTURA" {% if request.GET.tipo == "PINTURA" %}selected{% endif %}>Pintura</option>
+                <option value="OTRO" {% if request.GET.tipo == "OTRO" %}selected{% endif %}>Otro</option>
+            </select>
+
+            <label for="monitor" class="fw-bold small mb-0">Monitor ID:</label>
+            <input type="number" name="monitor" id="monitor" 
+                   class="form-control form-control-sm w-auto" 
+                   placeholder="Ej: 3" value="{{ request.GET.monitor }}">
+            
+            <button type="submit" class="btn btn-primary btn-sm px-4">Buscar</button>
+            
+            {% if request.GET.tipo or request.GET.monitor %}
+                <a href="{% url 'listar_actividades' %}" class="btn btn-outline-danger btn-sm">Borrar filtros</a>
+            {% endif %}
+        </form>
+    </section>
+
+    {% if actividades %}
+        <div class="table-container shadow-sm">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Horario</th>
+                        <th>Monitor</th>
+                        <th class="text-center">Inscripciones</th>
+                        <th class="text-center">Editar</th>
+                        <th class="text-center">Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for actividad in actividades %}
+                        <tr>
+                            <td class="text-muted small">#{{ actividad.id }}</td>
+                            <td>
+                                <a href="{% url 'filtrar_actividad' actividad.id %}" class="text-decoration-none fw-bold">
+                                    {{ actividad.nombre }}
+                                </a>
+                                <div class="text-muted small">{{ actividad.get_tipo_display }}</div>
+                            </td>
+                            <td class="small">
+                                {{ actividad.horario|date:"l H:i" }}<br>
+                                <span class="text-muted">{{ actividad.duracion }} min</span>
+                            </td>
+                            <td>{{ actividad.monitor.nombre }}</td>
+                            <td class="text-center">
+                                <a href="{% url 'listar_inscripciones' actividad.id %}" class="btn-action" title="Listado">📋</a>
+                                <a href="{% url 'inscribir_usuario_actividad' actividad.id %}" class="btn-action" title="Inscribir">📝</a>
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'editar_actividad' actividad.id %}" class="btn-action" title="Editar">✏️</a>
+                            </td>
+                            <td class="text-center">
+                                <form method="POST" action="{% url 'confirmar_eliminar_actividad' actividad.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" name="eliminar" value="si" class="btn-action" title="Eliminar">🗑️</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <a href="nuevo/" class="btn-nuevo shadow-sm">
+            + Nueva actividad
+        </a>
+
+    {% else %}
+        <div class="alert alert-info border-0 shadow-sm" role="alert">
+            <h4 class="alert-heading">Sin registros</h4>
+            <p class="mb-0">No hay actividades que coincidan con los filtros seleccionados.</p>
+        </div>
+        <a href="nuevo/" class="btn-nuevo">Crear primera actividad</a>
+    {% endif %}
+
+    <script src="{% static 'bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
