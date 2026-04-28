@@ -1,15 +1,116 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Listado de usuarios</title>
-    </head>
-    <body>                
-        <!-- Título -->
-        <a href="{% url 'home_administracion' %}" style="display: inline-block; margin-bottom: 12px; padding: 8px 12px; background-color: #4b5563; color: #ffffff; text-decoration: none; border-radius: 6px;">
-            ← Volver
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error en la solicitud</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
+    
+    <style>
+        body { 
+            background-color: #f8f9fa; 
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        .error-card {
+            background: white;
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        h1 { 
+            font-weight: 800; 
+            color: #dc3545; /* Rojo Bootstrap */
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .error-list {
+            text-align: left;
+            background-color: #fff5f5;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #feb2b2;
+        }
+
+        /* Quitamos los puntos negros feos de la captura */
+        .error-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .error-item {
+            color: #9b2c2c;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            display: inline-block;
+            background-color: #0d6efd;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-action:hover {
+            background-color: #0b5ed7;
+            color: white;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="error-card">
+        <h1>¡Ups! Algo salió mal</h1>
+        <p class="text-muted mb-4">No hemos podido procesar la solicitud debido a los siguientes errores:</p>
+
+        <div class="error-list">
+            <ul>
+                {% if error_adapter.has_errors %}
+                    {# Errores Globales #}
+                    {% for error in error_adapter.get_global_errors %}
+                        <li class="error-item">
+                            <span>⚠️</span> <strong>Global:</strong> {{ error }}
+                        </li>
+                    {% endfor %}
+
+                    {# Errores de Campos #}
+                    {% for campo, errores in error_adapter.get_field_errors.items %}
+                        {% for error in errores %}
+                            <li class="error-item">
+                                <span>•</span> <strong>{{ campo|capfirst }}:</strong> {{ error }}
+                            </li>
+                        {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    <li class="error-item">Ocurrió un error inesperado en el sistema.</li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <a href="javascript:history.back()" class="btn-action">
+            Regresar y corregir
         </a>
-        <h1>{{ mensaje }}</h1>
-    </body>
+    </div>
+
+</body>
 </html>

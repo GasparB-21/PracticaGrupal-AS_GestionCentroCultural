@@ -1,71 +1,177 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Listado de usuarios</title>
-    </head>
-    <body>                
-        <!-- Título -->
-        <a href="{% url 'home_administracion' %}" style="display: inline-block; margin-bottom: 12px; padding: 8px 12px; background-color: #4b5563; color: #ffffff; text-decoration: none; border-radius: 6px;">
-            ← Volver
-        </a>
-        <h1>Listado de usuarios registrados en el sistema</h1>
-        <section>
-            <form method="GET" action="{% url 'listar_usuarios' %}">
-                <label for="actividad">Filtrar por ID de Actividad:</label>
-                <input type="number" name="actividad" id="actividad" placeholder="Ej: 5" value="{{ request.GET.actividad }}">
-                <button type="submit">Buscar Usuarios</button>
-                <a href="{% url 'listar_usuarios' %}">Ver todos</a>
-            </form>
-        </section>
-        <!-- Card contenedora -->
-        {% if usuarios %}
-            <table>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de usuarios</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
+    
+    <style>
+        body { 
+            background-color: #f8f9fa; 
+            color: #333;
+            padding-top: 40px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        h1 { 
+            font-weight: 800; 
+            letter-spacing: -1px; 
+            color: #212529;
+            margin-bottom: 1.5rem;
+        }
+
+
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            transition: background 0.2s;
+        }
+        .btn-volver:hover { background-color: #5a6268; color: white; }
+ 
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .table-container {
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 20px;
+        }
+
+        .table thead th {
+            background-color: #fcfcfc;
+            border-bottom: 2px solid #f0f2f5;
+            color: #6c757d;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 15px;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f0f2f5;
+        }
+
+        .btn-action {
+            background: none;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .btn-action:hover { background-color: #f8f9fa; }
+
+        .btn-nuevo {
+            display: inline-block;
+            background-color: #0d6efd;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-nuevo:hover { background-color: #0b5ed7; color: white; transform: translateY(-2px); }
+    </style>
+</head>
+<body class="container">
+
+    <a href="{% url 'home_administracion' %}" class="btn-volver">
+        ← Volver al inicio
+    </a>
+
+    <h1>Listado de usuarios</h1>
+
+    <section class="filter-section shadow-sm">
+        <form method="GET" action="{% url 'listar_usuarios' %}" class="d-flex align-items-center gap-3 w-100">
+            <label for="actividad" class="fw-bold small mb-0">Actividad ID:</label>
+            <input type="number" name="actividad" id="actividad" 
+                   class="form-control form-control-sm w-auto" 
+                   placeholder="Ej: 5" value="{{ request.GET.actividad }}">
+            
+            <button type="submit" class="btn btn-primary btn-sm px-4">Buscar</button>
+            
+            {% if request.GET.actividad %}
+                <a href="{% url 'listar_usuarios' %}" class="btn btn-outline-danger btn-sm">Borrar filtro</a>
+            {% endif %}
+        </form>
+    </section>
+
+    {% if usuarios %}
+        <div class="table-container shadow-sm">
+            <table class="table mb-0">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
-                        <th>Edad</th>
+                        <th class="text-center">Edad</th>
                         <th>Email</th>
                         <th>Teléfono</th>
-                        <th>Editar</th>
-                        <th>Eliminar</th>
+                        <th class="text-center">Editar</th>
+                        <th class="text-center">Eliminar</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     {% for usuario in usuarios %}
                         <tr>
-                            <td>{{ usuario.id }}</td>
+                            <td class="text-muted small">#{{ usuario.id }}</td>
                             <td>
-                                <a href="{% url 'filtrar_usuario' usuario.id %}">
+                                <a href="{% url 'filtrar_usuario' usuario.id %}" class="text-decoration-none fw-bold">
                                     {{ usuario.nombre }}
                                 </a>
                             </td>
-                            <td>{{ usuario.edad }}</td>
-                            <td>{{ usuario.email }}</td>
+                            <td class="text-center">{{ usuario.edad }}</td>
+                            <td class="text-muted">{{ usuario.email }}</td>
                             <td>{{ usuario.telefono }}</td>
-                            <td>
-                                <a href="{% url 'editar_usuario' usuario.id %}" style="text-decoration: none;">✏️</a>
+                            <td class="text-center">
+                                <a href="{% url 'editar_usuario' usuario.id %}" class="btn-action" title="Editar">✏️</a>
                             </td>
-                            <td>
-                                <form method="POST" action="{% url 'confirmar_eliminar_usuario' usuario.id %}">
+                            <td class="text-center">
+                                <form method="POST" action="{% url 'confirmar_eliminar_usuario' usuario.id %}" class="d-inline">
                                     {% csrf_token %}
-                                    <button type="submit" name="eliminar" value="si">🗑️</button>
+                                    <button type="submit" name="eliminar" value="si" class="btn-action" title="Eliminar">🗑️</button>
                                 </form>
                             </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
 
-            <a href="nuevo/" style="display: inline-block; margin-bottom: 16px; padding: 10px 14px; background-color: #2563eb; color: #ffffff; text-decoration: none; border-radius: 6px;">
-                Nuevo usuario
-            </a>
+        <a href="nuevo/" class="btn-nuevo shadow-sm">
+            + Nuevo usuario
+        </a>
 
-        {% else %}
-            <h3>No hay usuarios registrados en el sistema.</h3>
-        {% endif %}
-    </body>
+    {% else %}
+        <div class="alert alert-info border-0 shadow-sm" role="alert">
+            <h4 class="alert-heading">Sin registros</h4>
+            <p class="mb-0">No hay usuarios registrados que coincidan con la búsqueda.</p>
+        </div>
+        <a href="nuevo/" class="btn-nuevo">Crear primer usuario</a>
+    {% endif %}
+
+    <script src="{% static 'bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+</body>
 </html>

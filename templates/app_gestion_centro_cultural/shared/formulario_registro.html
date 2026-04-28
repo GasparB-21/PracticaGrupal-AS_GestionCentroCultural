@@ -1,17 +1,137 @@
-{% block content %}
-  {% if referer %}
-    <a href="{{ referer }}" style="display: inline-block; margin-bottom: 12px; padding: 8px 12px; background-color: #4b5563; color: #ffffff; text-decoration: none; border-radius: 6px;">
-      ← Volver
-    </a>
-  {% endif %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ titulo }}</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
+    
+    <style>
+        body { 
+            background-color: #f8f9fa; 
+            color: #333;
+            padding-top: 30px; 
+            padding-bottom: 50px;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
 
-  <h2>{{ titulo }}</h2>
+        h2 { 
+            font-weight: 800; 
+            letter-spacing: -1px; 
+            color: #212529;
+            margin-bottom: 1.5rem;
+        }
 
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: #6c757d;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-back:hover { 
+            background-color: #5a6268; 
+        }
 
-    <button type="submit">Guardar</button>
-  </form>
-  
-{% endblock %}
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            max-width: 500px;
+            margin-top: 0;
+        }
+
+        .field-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #4b5563;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"], input[type="email"], input[type="number"], select, textarea {
+            display: block;
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            color: #212529;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus {
+            border-color: #86b7fe;
+            outline: 0;
+            box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.1);
+        }
+
+        .btn-submit {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
+        }
+    </style>
+</head>
+<body class="container">
+
+    <div class="row">
+        <div class="col-12">
+            {% if referer %}
+                <a href="{{ referer }}" class="btn-back">
+                    ← Volver
+                </a>
+            {% endif %}
+
+            <div class="form-container">
+                <h2>{{ titulo }}</h2>
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                        <div class="field-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn-submit">
+                        Guardar registro
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
