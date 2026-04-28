@@ -11,6 +11,12 @@ def listar_monitores(request):
         return JsonResponse({"error": "Método no permitido"}, status=405)
 
     monitores = Monitor.objects.all()
+
+    # Filtro por ID
+    m_id = request.GET.get('id')
+    if m_id and int(m_id) >= 0:
+        monitores = monitores.filter(id__icontains=m_id)
+
     return render(request, 'app_gestion_centro_cultural/monitores/lista_monitores.html', {
         'monitores': monitores
     })

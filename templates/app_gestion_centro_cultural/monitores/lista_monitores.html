@@ -11,7 +11,7 @@
         body { 
             background-color: #f8f9fa; 
             color: #333;
-            padding-top: 40px; /* Encuadrado alto */
+            padding-top: 40px;
             font-family: 'Segoe UI', system-ui, sans-serif;
         }
 
@@ -22,7 +22,6 @@
             margin-bottom: 1.5rem;
         }
 
-        /* Botón Volver idéntico al de usuarios */
         .btn-volver {
             display: inline-flex;
             align-items: center;
@@ -38,7 +37,18 @@
         }
         .btn-volver:hover { background-color: #5a6268; color: white; }
 
-        /* Contenedor de tabla con sombra suave */
+        /* Filtros */
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
         .table-container {
             background: white;
             padding: 10px;
@@ -64,7 +74,6 @@
             border-bottom: 1px solid #f0f2f5;
         }
 
-        /* Acciones (Emojis sin subrayado y con fondo al pasar) */
         .btn-action {
             background: none;
             border: none;
@@ -76,7 +85,6 @@
         }
         .btn-action:hover { background-color: #f8f9fa; }
 
-        /* Botón Nuevo Monitor */
         .btn-nuevo {
             display: inline-block;
             background-color: #0d6efd;
@@ -101,6 +109,21 @@
     </a>
 
     <h1>Listado de monitores</h1>
+
+    <section class="filter-section shadow-sm">
+        <form method="GET" action="{% url 'listar_monitores' %}" class="d-flex align-items-center gap-3 w-100">
+            <label for="id" class="fw-bold small mb-0">Monitor ID:</label>
+            <input type="number" name="id" id="id" 
+                   class="form-control form-control-sm w-auto" 
+                   placeholder="Ej: 2" min="0" value="{{ request.GET.id }}">
+            
+            <button type="submit" class="btn btn-primary btn-sm px-4">Buscar</button>
+            
+            {% if request.GET.id %}
+                <a href="{% url 'listar_monitores' %}" class="btn btn-outline-danger btn-sm">Borrar filtro</a>
+            {% endif %}
+        </form>
+    </section>
 
     {% if monitores %}
         <div class="table-container shadow-sm">
@@ -134,7 +157,7 @@
                             <td class="text-center">
                                 <form method="POST" action="{% url 'confirmar_eliminar_monitor' monitor.id %}" class="d-inline">
                                     {% csrf_token %}
-                                    <button type="submit" name="eliminar" value="si" class="btn-action" title="Eliminar">🗑️</button>
+                                    <button type="submit" name="confirmar" value="si" class="btn-action" title="Eliminar">🗑️</button>
                                 </form>
                             </td>
                         </tr>
@@ -150,7 +173,7 @@
     {% else %}
         <div class="alert alert-info border-0 shadow-sm" role="alert">
             <h4 class="alert-heading">Sin registros</h4>
-            <p class="mb-0">No hay monitores registrados actualmente en el sistema.</p>
+            <p class="mb-0">No hay monitores con ese ID en el sistema.</p>
         </div>
         <a href="nuevo/" class="btn-nuevo">Crear primer monitor</a>
     {% endif %}

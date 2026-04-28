@@ -12,6 +12,12 @@ def listar_actividades(request):
         return JsonResponse({"error": "Método no permitido"}, status=405)
 
     actividades = Actividad.objects.all()
+
+    # Filtrar por ID
+    a_id = request.GET.get('id')
+    if a_id:
+        actividades = actividades.filter(id__icontains=a_id)
+
     tipo = request.GET.get("tipo")
     if tipo:
         actividades = actividades.filter(tipo=tipo)

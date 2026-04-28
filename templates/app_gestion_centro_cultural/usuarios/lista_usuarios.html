@@ -106,14 +106,14 @@
 
     <section class="filter-section shadow-sm">
         <form method="GET" action="{% url 'listar_usuarios' %}" class="d-flex align-items-center gap-3 w-100">
-            <label for="actividad" class="fw-bold small mb-0">Actividad ID:</label>
-            <input type="number" name="actividad" id="actividad" 
+            <label for="id" class="fw-bold small mb-0">Usuario ID:</label>
+            <input type="number" name="id" id="id" min="0"
                    class="form-control form-control-sm w-auto" 
-                   placeholder="Ej: 5" value="{{ request.GET.actividad }}">
+                   placeholder="Ej: 1" value="{{ request.GET.id }}">
             
             <button type="submit" class="btn btn-primary btn-sm px-4">Buscar</button>
             
-            {% if request.GET.actividad %}
+            {% if request.GET.id %}
                 <a href="{% url 'listar_usuarios' %}" class="btn btn-outline-danger btn-sm">Borrar filtro</a>
             {% endif %}
         </form>
@@ -151,7 +151,7 @@
                             <td class="text-center">
                                 <form method="POST" action="{% url 'confirmar_eliminar_usuario' usuario.id %}" class="d-inline">
                                     {% csrf_token %}
-                                    <button type="submit" name="eliminar" value="si" class="btn-action" title="Eliminar">🗑️</button>
+                                    <button type="submit" name="confirmar" value="si" class="btn-action" title="Eliminar">🗑️</button>
                                 </form>
                             </td>
                         </tr>
@@ -167,7 +167,7 @@
     {% else %}
         <div class="alert alert-info border-0 shadow-sm" role="alert">
             <h4 class="alert-heading">Sin registros</h4>
-            <p class="mb-0">No hay usuarios registrados que coincidan con la búsqueda.</p>
+            <p class="mb-0">No hay usuarios registrados con ese ID.</p>
         </div>
         <a href="nuevo/" class="btn-nuevo">Crear primer usuario</a>
     {% endif %}

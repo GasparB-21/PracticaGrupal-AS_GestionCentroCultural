@@ -37,6 +37,18 @@
         }
         .btn-volver:hover { background-color: #5a6268; color: white; }
 
+        /* Estilo para la sección de filtros idéntico a usuarios/actividades */
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
         .table-container {
             background: white;
             padding: 10px;
@@ -91,7 +103,22 @@
         ← Volver al inicio
     </a>
 
-    <h1>Listado de salas registradas en el sistema</h1>
+    <h1>Listado de salas registradas</h1>
+
+    <section class="filter-section shadow-sm">
+        <form method="GET" action="{% url 'listar_salas' %}" class="d-flex align-items-center gap-3 w-100">
+            <label for="id" class="fw-bold small mb-0">Sala ID:</label>
+            <input type="number" name="id" id="id" 
+                   class="form-control form-control-sm w-auto" 
+                   placeholder="Ej: 1" min="0" value="{{ request.GET.id }}">
+            
+            <button type="submit" class="btn btn-primary btn-sm px-4">Buscar</button>
+            
+            {% if request.GET.id %}
+                <a href="{% url 'listar_salas' %}" class="btn btn-outline-danger btn-sm">Borrar filtro</a>
+            {% endif %}
+        </form>
+    </section>
 
     {% if salas %}
         <div class="table-container shadow-sm">
@@ -100,7 +127,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
-                        <th>Capacidad</th>
+                        <th class="text-center">Capacidad</th>
                         <th>Ubicación</th>
                         <th>Responsable</th>
                         <th class="text-center">Editar</th>
@@ -112,17 +139,13 @@
                     {% for sala in salas %}
                         <tr>
                             <td class="text-muted small">#{{ sala.id }}</td>
-
                             <td>
                                 <a href="{% url 'filtrar_sala' sala.id %}" class="text-decoration-none fw-bold">
                                     {{ sala.nombre }}
                                 </a>
                             </td>
-
                             <td class="text-center">{{ sala.capacidad }}</td>
-
                             <td class="text-muted">{{ sala.ubicacion }}</td>
-
                             <td>
                                 {% if sala.responsable %}
                                     {{ sala.responsable.nombre }}
@@ -130,15 +153,13 @@
                                     <span class="text-muted">Sin responsable</span>
                                 {% endif %}
                             </td>
-
                             <td class="text-center">
                                 <a href="{% url 'editar_sala' sala.id %}" class="btn-action" title="Editar">✏️</a>
                             </td>
-
                             <td class="text-center">
                                 <form method="POST" action="{% url 'confirmar_eliminar_sala' sala.id %}" class="d-inline">
                                     {% csrf_token %}
-                                    <button type="submit" name="eliminar" value="si" class="btn-action" title="Eliminar">🗑️</button>
+                                    <button type="submit" name="confirmar" value="si" class="btn-action" title="Eliminar">🗑️</button>
                                 </form>
                             </td>
                         </tr>
@@ -154,12 +175,9 @@
     {% else %}
         <div class="alert alert-info border-0 shadow-sm" role="alert">
             <h4 class="alert-heading">Sin registros</h4>
-            <p class="mb-0">No hay salas registradas en el sistema.</p>
+            <p class="mb-0">No hay salas que coincidan con la búsqueda.</p>
         </div>
-
-        <a href="nuevo/" class="btn-nuevo">
-            Crear primera sala
-        </a>
+        <a href="nuevo/" class="btn-nuevo">Crear primera sala</a>
     {% endif %}
 
     <script src="{% static 'bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>

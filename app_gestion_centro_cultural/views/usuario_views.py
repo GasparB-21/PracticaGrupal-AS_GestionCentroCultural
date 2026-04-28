@@ -20,6 +20,12 @@ def listar_usuarios(request):
         return JsonResponse({"error": "Método no permitido"}, status=405)
     
     lista_usuarios = Usuario.objects.all()
+
+    # Filtrar por ID
+    u_id = request.GET.get('id')
+    if u_id:
+        lista_usuarios = lista_usuarios.filter(id__icontains=u_id)
+
     actividad_id = request.GET.get('actividad')
     if actividad_id:
         lista_usuarios = lista_usuarios.filter(actividades__id=actividad_id)

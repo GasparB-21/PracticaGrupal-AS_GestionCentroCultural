@@ -12,6 +12,12 @@ def listar_salas(request):
         return JsonResponse({"error": "Método no permitido"}, status=405)
 
     salas = Sala.objects.all()
+
+    # Filtro por ID
+    s_id = request.GET.get('id')
+    if s_id and int(s_id) >= 0:
+        salas = salas.filter(id__icontains=s_id)
+
     return render(
         request,
         "app_gestion_centro_cultural/salas/lista_salas.html",
