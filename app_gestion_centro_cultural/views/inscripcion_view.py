@@ -66,27 +66,20 @@ def inscribir_usuario_actividad(request, id):
         "referer": referer},
     )
 
-# Eliminar inscripcion
-def eliminar_inscripcion(request, actividad_id, usuario_id):
-    if request.method == "POST":
-        try:
-            actividad = Actividad.objects.get(id=actividad_id)
-            usuario = Usuario.objects.get(id=usuario_id)
-            actividad.usuarios.remove(usuario)
-        except (Actividad.DoesNotExist, Usuario.DoesNotExist):
-            pass
-    return redirect("listar_inscripciones", id=actividad_id)
-
 # Confirmar eliminar inscripcion
 def confirmar_eliminar_inscripcion(request, actividad_id, usuario_id):
     try:
         actividad = Actividad.objects.get(id=actividad_id)
         usuario = Usuario.objects.get(id=usuario_id)
         inscripcion = Inscripcion.objects.get(actividad=actividad, usuario=usuario)
-    except Inscripcion.DoesNotExist:
+    except Actividad.DoesNotExist:
         return render(
-            request, "app_gestion_centro_cultural/inscripciones/info_inscripcion.html", {"inscripcion": None}
+            request,
+            "app_gestion_centro_cultural/actividades/info_actividad.html",
+            {"actividad": None},
         )
+    except (Usuario.DoesNotExist, Inscripcion.DoesNotExist):
+        return redirect("listar_inscripciones", id=actividad_id)
 
     if request.method == "POST":
         referer = request.META.get("HTTP_REFERER", reverse("listar_inscripciones", args=[actividad_id]))
@@ -101,4 +94,4 @@ def confirmar_eliminar_inscripcion(request, actividad_id, usuario_id):
             {"inscripcion": inscripcion, "referer": referer},
         )
 
-    return redirect("filtrar_inscripcion", id=id)
+    return redirect("listar_inscripciones", id=actividad_id)

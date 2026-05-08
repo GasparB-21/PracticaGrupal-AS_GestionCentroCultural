@@ -15,8 +15,12 @@ def listar_salas(request):
 
     # Filtro por ID
     s_id = request.GET.get('id')
-    if s_id and int(s_id) >= 0:
-        salas = salas.filter(id__icontains=s_id)
+    if s_id:
+        s_id = s_id.strip()
+        if s_id.isdigit():
+            salas = salas.filter(id=int(s_id))
+        else:
+            salas = salas.none()
 
     return render(
         request,

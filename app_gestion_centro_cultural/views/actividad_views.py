@@ -16,7 +16,11 @@ def listar_actividades(request):
     # Filtrar por ID
     a_id = request.GET.get('id')
     if a_id:
-        actividades = actividades.filter(id__icontains=a_id)
+        a_id = a_id.strip()
+        if a_id.isdigit():
+            actividades = actividades.filter(id=int(a_id))
+        else:
+            actividades = actividades.none()
 
     tipo = request.GET.get("tipo")
     if tipo:

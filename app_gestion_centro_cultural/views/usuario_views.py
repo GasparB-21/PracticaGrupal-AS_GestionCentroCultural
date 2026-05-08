@@ -24,7 +24,11 @@ def listar_usuarios(request):
     # Filtrar por ID
     u_id = request.GET.get('id')
     if u_id:
-        lista_usuarios = lista_usuarios.filter(id__icontains=u_id)
+        u_id = u_id.strip()
+        if u_id.isdigit():
+            lista_usuarios = lista_usuarios.filter(id=int(u_id))
+        else:
+            lista_usuarios = lista_usuarios.none()
 
     actividad_id = request.GET.get('actividad')
     if actividad_id:

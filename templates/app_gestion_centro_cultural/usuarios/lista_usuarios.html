@@ -151,7 +151,7 @@
                             <td class="text-center">
                                 <form method="POST" action="{% url 'confirmar_eliminar_usuario' usuario.id %}" class="d-inline">
                                     {% csrf_token %}
-                                    <button type="submit" name="confirmar" value="si" class="btn-action" title="Eliminar">🗑️</button>
+                                    <button type="submit" name="eliminar" value="si" class="btn-action" title="Eliminar">🗑️</button>
                                 </form>
                             </td>
                         </tr>
