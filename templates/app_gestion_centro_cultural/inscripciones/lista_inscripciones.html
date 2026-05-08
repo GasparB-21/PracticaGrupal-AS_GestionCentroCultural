@@ -109,7 +109,7 @@
                             <td class="text-muted">{{ usuario.email }}</td>
                             <td>{{ usuario.telefono }}</td>
                             <td class="text-center">
-                                <form method="POST" action="{% url 'eliminar_inscripcion' actividad.id usuario.id %}" class="d-inline">
+                                <form method="POST" action="{% url 'confirmar_eliminar_inscripcion' actividad.id usuario.id %}" class="d-inline">
                                     {% csrf_token %}
                                     <button type="submit" name="eliminar" value="si" class="btn-action" title="Anular Inscripción">
                                         🗑️

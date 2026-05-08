@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from ..models import Actividad, Usuario
+from ..models import Actividad, Usuario, Inscripcion
 from ..forms import  InscripcionForm
 from ..form_error_adapter import FormErrorAdapter
 
@@ -76,3 +76,29 @@ def eliminar_inscripcion(request, actividad_id, usuario_id):
         except (Actividad.DoesNotExist, Usuario.DoesNotExist):
             pass
     return redirect("listar_inscripciones", id=actividad_id)
+
+# Confirmar eliminar inscripcion
+def confirmar_eliminar_inscripcion(request, actividad_id, usuario_id):
+    try:
+        actividad = Actividad.objects.get(id=actividad_id)
+        usuario = Usuario.objects.get(id=usuario_id)
+        inscripcion = Inscripcion.objects.get(actividad=actividad, usuario=usuario)
+    except Inscripcion.DoesNotExist:
+        return render(
+            request, "app_gestion_centro_cultural/inscripciones/info_inscripcion.html", {"inscripcion": None}
+        )
+
+    if request.method == "POST":
+        referer = request.META.get("HTTP_REFERER", reverse("listar_inscripciones", args=[actividad_id]))
+
+        if "confirmar" in request.POST:
+            actividad.usuarios.remove(usuario)
+            return redirect("listar_inscripciones", id=actividad_id)
+
+        return render(
+            request,
+            "app_gestion_centro_cultural/inscripciones/confirmar_eliminar_inscripcion.html",
+            {"inscripcion": inscripcion, "referer": referer},
+        )
+
+    return redirect("filtrar_inscripcion", id=id)

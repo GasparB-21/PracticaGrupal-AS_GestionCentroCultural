@@ -147,6 +147,7 @@
                         <th>Horario</th>
                         <th>Monitor</th>
                         <th class="text-center">Inscripciones</th>
+                        <th class="text-center">Incribir</th>
                         <th class="text-center">Editar</th>
                         <th class="text-center">Eliminar</th>
                     </tr>
@@ -165,9 +166,15 @@
                                 {{ actividad.horario|date:"l H:i" }}<br>
                                 <span class="text-muted">{{ actividad.duracion }} min</span>
                             </td>
-                            <td>{{ actividad.monitor.nombre }}</td>
-                            <td class="text-center">
+                            <td>
+                                <a href="{% url 'filtrar_monitor' actividad.monitor.id %}" class="text-decoration-none fw-bold">
+                                    {{ actividad.monitor.nombre }}
+                                </a>
+                            </td>
+                             <td class="text-center">
                                 <a href="{% url 'listar_inscripciones' actividad.id %}" class="btn-action" title="Listado">📋</a>
+                            </td>
+                            <td class="text-center">
                                 <a href="{% url 'inscribir_usuario_actividad' actividad.id %}" class="btn-action" title="Inscribir">📝</a>
                             </td>
                             <td class="text-center">

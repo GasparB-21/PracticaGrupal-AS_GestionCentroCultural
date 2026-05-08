@@ -47,5 +47,6 @@ urlpatterns = [
     #Consulta de inscripciones de una actividad
     path('actividades/<int:id>/inscripciones/', listar_inscripciones, name='listar_inscripciones'),
     path('actividades/<int:id>/inscribir/', inscribir_usuario_actividad, name='inscribir_usuario_actividad'),
-    path('actividades/<int:actividad_id>/inscripciones/<int:usuario_id>/eliminar/', eliminar_inscripcion, name='eliminar_inscripcion')
+    path('actividades/<int:actividad_id>/inscripciones/<int:usuario_id>/eliminar/', eliminar_inscripcion, name='eliminar_inscripcion'),
+    path('actividades/<int:actividad_id>/inscripciones/<int:usuario_id>/eliminar/', confirmar_eliminar_inscripcion, name='confirmar_eliminar_inscripcion')
 ]
