@@ -48,7 +48,7 @@ def formulario_registro_sala(request):
     return render(
         request,
         "app_gestion_centro_cultural/shared/formulario_registro.html",
-        {"titulo": "Página de registro de salas", "form": form, "referer": referer},
+        {"titulo": "Página de registro de salas", "form": form, "referer": referer, "error_adapter": FormErrorAdapter(form)},
     )
 
 
@@ -94,7 +94,7 @@ def editar_sala_id(request, id):
     return render(
         request,
         "app_gestion_centro_cultural/shared/formulario_registro.html",
-        {"titulo": "Editar sala", "form": form, "referer": referer},
+        {"titulo": "Editar sala", "form": form, "referer": referer, "error_adapter": FormErrorAdapter(form)},
     )
 
 

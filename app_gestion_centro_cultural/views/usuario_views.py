@@ -52,7 +52,7 @@ def formulario_registro_usuario(request):
         return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Página de registro de usuarios', 'form': form, 'referer': referer, 'error_adapter': FormErrorAdapter(form)})
     else:
         form = UsuarioForm()
-        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Página de registro de usuarios', 'form': form, 'referer': referer})
+        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Página de registro de usuarios', 'form': form, 'referer': referer, 'error_adapter': FormErrorAdapter(form)})
 
 # Filtrar usuario por id
 def filtrar_usuario_id(request, id):
@@ -86,7 +86,7 @@ def editar_usuario_id(request, id):
         return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Editar usuario', 'form': form, 'referer': referer, 'error_adapter': FormErrorAdapter(form)})
     else:
         form = UsuarioForm(instance=usuario)
-        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Editar usuario', 'form': form, 'referer': referer})
+        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Editar usuario', 'form': form, 'referer': referer, 'error_adapter': FormErrorAdapter(form)})
     
 # Confirmar eliminar usuario
 #

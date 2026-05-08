@@ -46,14 +46,6 @@ def formulario_registro_monitor(request):
         else:
             form = MonitorForm()
 
-    # Si hay errores y estamos en modo debug, mandamos a la pantalla de error
-    if force_error or (request.method == 'POST' and not form.is_valid()):
-        return render(request, 'app_gestion_centro_cultural/shared/error.html', {
-            'titulo': 'Error en el Registro de Monitor',
-            'error_adapter': FormErrorAdapter(form),
-            'referer': referer
-        })
-
     return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {
         'titulo': 'Página de registro de monitores',
         'form': form,
@@ -84,14 +76,6 @@ def editar_monitor_id(request, id):
             form.add_error(None, "Error global forzado en edición (GET)")
         else:
             form = MonitorForm(instance=monitor)
-
-    # Si hay errores, mandamos a la pantalla de error
-    if force_error or (request.method == 'POST' and not form.is_valid()):
-        return render(request, 'app_gestion_centro_cultural/shared/error.html', {
-            'titulo': 'Error al Editar Monitor',
-            'error_adapter': FormErrorAdapter(form),
-            'referer': referer
-        })
 
     return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {
         'titulo': 'Editar monitor',

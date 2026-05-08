@@ -55,7 +55,7 @@ def formulario_registro_actividad(request):
     return render(
         request,
         "app_gestion_centro_cultural/shared/formulario_registro.html",
-        {"titulo": "Página de registro de actividades", "form": form, "referer": referer},
+        {"titulo": "Página de registro de actividades", "form": form, "referer": referer, "error_adapter": FormErrorAdapter(form)},
     )
 
 
@@ -107,7 +107,7 @@ def editar_actividad_id(request, id):
     return render(
         request,
         "app_gestion_centro_cultural/shared/formulario_registro.html",
-        {"titulo": "Editar actividad", "form": form, "referer": referer},
+        {"titulo": "Editar actividad", "form": form, "referer": referer, "error_adapter": FormErrorAdapter(form)},
     )
 
 

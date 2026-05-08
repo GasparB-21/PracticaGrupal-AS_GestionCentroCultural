@@ -1,6 +1,16 @@
 class FormErrorAdapter:
     def __init__(self, form):
         self.form = form
+
+    def get_fields(self):
+        return [
+            {
+                "field": field,
+                "errors": list(field.errors),
+                "has_errors": bool(field.errors),
+            }
+            for field in self.form
+        ]
  
     def get_field_errors(self):
         if not self.form.errors:
