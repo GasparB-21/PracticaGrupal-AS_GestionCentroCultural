@@ -78,10 +78,7 @@ class Actividad(models.Model):
 
     sala_principal = models.ForeignKey(
                                             Sala,
-                                            # En este no protegemos la relación pq esta es opcional
-                                            on_delete=models.SET_NULL,
-                                            null=True,
-                                            blank=True,
+                                            on_delete=models.PROTECT,
                                             related_name="actividades_como_sala_principal",
                                         )
 

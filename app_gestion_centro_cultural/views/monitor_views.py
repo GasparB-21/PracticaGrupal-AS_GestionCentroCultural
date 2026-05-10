@@ -4,6 +4,8 @@ from django.urls import reverse
 from ..models import Monitor
 from ..forms import MonitorForm
 from ..form_error_adapter import FormErrorAdapter
+from django.db.models import ProtectedError
+from django.contrib import messages
 
 # Consulta de monitores
 def listar_monitores(request):
@@ -107,15 +109,21 @@ def confirmar_eliminar_monitor(request, id):
             'monitor': None
         })
 
+    actividades_bloqueantes = monitor.actividades.all()
     referer = request.META.get('HTTP_REFERER', reverse('filtrar_monitor', args=[id]))
 
     if request.method == 'POST':
         if 'confirmar' in request.POST:
-            monitor.delete()
+            try:
+                monitor.delete()
+                return redirect('listar_monitores')
+            except ProtectedError:
+                messages.error(request, f"No se puede eliminar a {monitor.nombre} porque tiene actividades asignadas.")
             return redirect('listar_monitores')
 
         return render(request, 'app_gestion_centro_cultural/monitores/confirmar_eliminar_monitor.html', {
             'monitor': monitor,
+            'actividades_bloqueantes': actividades_bloqueantes,
             'referer': referer
         })
 

@@ -60,19 +60,32 @@
     <h1>Confirmar eliminación</h1>
 
     <div class="table-container shadow-sm">
-        <p class="fs-5 mb-4">
-            ¿Estás seguro de que quieres eliminar la sala <strong>"{{ sala.nombre }}"</strong>?
-        </p>
-
-        <form method="POST" action="{% url 'confirmar_eliminar_sala' sala.id %}" class="d-inline">
-            {% csrf_token %}
-            <button type="submit" name="confirmar" value="si" class="btn-confirmar">
-                Sí, eliminar
-            </button>
-        </form>
+        {% if actividades_bloqueantes %}
+            <div class="alert alert-danger">
+                <h4 class="alert-heading">¡Acción Bloqueada!</h4>
+                <p>No puedes eliminar la sala <strong>"{{ sala.nombre }}"</strong> porque es la sede principal de las siguientes actividades:</p>
+                <hr>
+                <ul class="mb-0">
+                    {% for actividad in actividades_bloqueantes %}
+                        <li>{{ actividad.nombre }} ({{ actividad.horario|date:"d/m/Y H:i" }})</li>
+                    {% endfor %}
+                </ul>
+                <p class="mt-3">Por favor, reasigna estas actividades a otra sala antes de intentar eliminarla.</p>
+            </div>
+        {% else %}
+            <p class="fs-5 mb-4">
+                ¿Estás seguro de que quieres eliminar la sala <strong>"{{ sala.nombre }}"</strong>?
+            </p>
+            <form method="POST" action="{% url 'confirmar_eliminar_sala' sala.id %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" name="confirmar" value="si" class="btn-confirmar">
+                    Sí, eliminar
+                </button>
+            </form>
+        {% endif %}
         
         <a href="{{ referer }}" class="btn-cancelar">
-            No, cancelar
+            {% if actividades_bloqueantes %}Volver{% else %}No, cancelar{% endif %}
         </a>
     </div>
 </body>

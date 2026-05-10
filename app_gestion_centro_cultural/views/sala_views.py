@@ -4,7 +4,8 @@ from django.urls import reverse
 from ..models import Sala
 from ..forms import SalaForm
 from ..form_error_adapter import FormErrorAdapter
-
+from django.contrib import messages
+from django.db.models import ProtectedError
 
 # Consulta de salas
 def listar_salas(request):
@@ -107,17 +108,25 @@ def confirmar_eliminar_sala(request, id):
             request, "app_gestion_centro_cultural/salas/info_sala.html", {"sala": None}
         )
 
+    actividades_bloqueantes = sala.actividades_como_sala_principal.all()
+    referer = request.META.get("HTTP_REFERER", reverse("filtrar_sala", args=[id]))
+    
     if request.method == "POST":
-        referer = request.META.get("HTTP_REFERER", reverse("filtrar_sala", args=[id]))
-
         if "confirmar" in request.POST:
-            sala.delete()
+            try:
+                sala.delete()
+                return redirect("listar_salas")
+            except ProtectedError:
+                messages.error(request, f"No se puede eliminar la sala '{sala.nombre}' porque tiene actividades asignadas.")
             return redirect("listar_salas")
-
+        
         return render(
             request,
             "app_gestion_centro_cultural/salas/confirmar_eliminar_sala.html",
-            {"sala": sala, "referer": referer},
+            {
+                "sala": sala, 
+                "referer": referer,
+                "actividades_bloqueantes": actividades_bloqueantes
+            },
         )
-
     return redirect("filtrar_sala", id=id)

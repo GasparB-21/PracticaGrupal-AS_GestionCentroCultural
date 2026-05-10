@@ -70,13 +70,6 @@
             transition: background 0.2s;
         }
         .btn-action:hover { background-color: #f8f9fa; }
-
-        /* Estilo para resaltar el nombre de la actividad en el título */
-        .text-actividad {
-            color: #0d6efd;
-            text-decoration: underline;
-            text-underline-offset: 4px;
-        }
     </style>
 </head>
 <body class="container">
@@ -85,7 +78,7 @@
         ← Volver a actividades
     </a>
 
-    <h1>Usuarios inscritos en <span class="text-actividad">{{ actividad.nombre }}</span></h1>
+    <h1>Usuarios inscritos en {{ actividad.nombre }}</h1>
 
     {% if usuarios %}
         <div class="table-container shadow-sm">

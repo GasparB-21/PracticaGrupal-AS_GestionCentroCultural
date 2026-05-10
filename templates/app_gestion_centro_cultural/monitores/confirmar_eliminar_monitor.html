@@ -33,15 +33,28 @@
     <h1>Confirmar eliminación</h1>
 
     <div class="table-container shadow-sm">
-        <p class="fs-5 mb-4">
-            ¿Estás seguro de que quieres eliminar al monitor <strong>"{{ monitor.nombre }}"</strong>?
-        </p>
+        {% if actividades_bloqueantes %}
+            <div class="alert alert-warning">
+                <p><strong>Atención:</strong> Este monitor no puede ser eliminado hasta que reasignes o borres las siguientes actividades:</p>
+                <ul>
+                    {% for actividad in actividades_bloqueantes %}
+                        <li>{{ actividad.nombre }} ({{ actividad.horario|date:"d/m/Y" }})</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <p class="fs-5 mb-4">
+                ¿Estás seguro de que quieres eliminar al monitor <strong>"{{ monitor.nombre }}"</strong>?
+            </p>
+        {% endif %}
 
         <form method="POST" action="{% url 'confirmar_eliminar_monitor' monitor.id %}" class="d-inline">
             {% csrf_token %}
-            <button type="submit" name="confirmar" value="si" class="btn-confirmar">
-                Sí, eliminar
-            </button>
+            {% if not actividades_bloqueantes %}
+                <button type="submit" name="confirmar" value="si" class="btn-confirmar">
+                    Sí, eliminar
+                </button>
+            {% endif %}
         </form>
         
         <a href="{{ referer }}" class="btn-cancelar">
