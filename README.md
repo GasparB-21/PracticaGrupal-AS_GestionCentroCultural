@@ -58,10 +58,10 @@ python -m venv venv
 source venv/bin/activate
 ```
 
-Instalar las dependencias:
+Instalar Django:
 
 ```bash
-pip install -r requirements.txt
+pip install django
 ```
 
 Aplicar las migraciones:
