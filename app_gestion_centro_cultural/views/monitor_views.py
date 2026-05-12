@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.urls import reverse
-from ..models import Monitor
+from ..models import Monitor, Sala
 from ..forms import MonitorForm
 from ..form_error_adapter import FormErrorAdapter
 from django.db.models import ProtectedError
-from django.contrib import messages
 
 # Consulta de monitores
 def listar_monitores(request):
@@ -103,6 +102,15 @@ def filtrar_monitor_id(request, id):
     })
 
 # Confirmar eliminar monitor
+def _render_confirmar_eliminar_monitor(request, monitor, referer):
+    return render(request, 'app_gestion_centro_cultural/monitores/confirmar_eliminar_monitor.html', {
+        'monitor': monitor,
+        'actividades_bloqueantes': monitor.actividades.order_by("nombre"),
+        'salas_bloqueantes': Sala.objects.filter(responsable=monitor).order_by("nombre"),
+        'referer': referer
+    })
+
+
 def confirmar_eliminar_monitor(request, id):
     try:
         monitor = Monitor.objects.get(id=id)
@@ -111,22 +119,21 @@ def confirmar_eliminar_monitor(request, id):
             'monitor': None
         })
 
-    actividades_bloqueantes = monitor.actividades.all()
     referer = request.META.get('HTTP_REFERER', reverse('filtrar_monitor', args=[id]))
+    actividades_bloqueantes = monitor.actividades.order_by("nombre")
+    salas_bloqueantes = Sala.objects.filter(responsable=monitor).order_by("nombre")
 
     if request.method == 'POST':
         if 'confirmar' in request.POST:
+            if actividades_bloqueantes.exists() or salas_bloqueantes.exists():
+                return _render_confirmar_eliminar_monitor(request, monitor, referer)
+
             try:
                 monitor.delete()
                 return redirect('listar_monitores')
             except ProtectedError:
-                messages.error(request, f"No se puede eliminar a {monitor.nombre} porque tiene actividades asignadas.")
-            return redirect('listar_monitores')
+                return _render_confirmar_eliminar_monitor(request, monitor, referer)
 
-        return render(request, 'app_gestion_centro_cultural/monitores/confirmar_eliminar_monitor.html', {
-            'monitor': monitor,
-            'actividades_bloqueantes': actividades_bloqueantes,
-            'referer': referer
-        })
+        return _render_confirmar_eliminar_monitor(request, monitor, referer)
 
-    return redirect('filtrar_monitor', id=id)
+    return _render_confirmar_eliminar_monitor(request, monitor, reverse('filtrar_monitor', args=[id]))

@@ -1,7 +1,8 @@
+from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from ..models import Actividad, Usuario, Inscripcion
-from ..forms import  InscripcionForm
+from ..forms import InscripcionForm
 from ..form_error_adapter import FormErrorAdapter
 
 # Consultar inscripciones de una actividad
@@ -34,35 +35,43 @@ def inscribir_usuario_actividad(request, id):
         )
     referer = reverse("listar_actividades")
     if request.method == "POST":
-        form = InscripcionForm(request.POST)
+        form = InscripcionForm(request.POST, actividad=actividad)
         if form.is_valid():
             usuario = form.cleaned_data['usuario']
             if actividad.usuarios.filter(id=usuario.id).exists():
                 form.add_error('usuario', "Este usuario ya está inscrito en esta actividad.")
                 return render(
-                    request, 
-                    "app_gestion_centro_cultural/shared/formulario_registro.html", 
+                    request,
+                    "app_gestion_centro_cultural/shared/formulario_registro.html",
                     {"titulo": f"Inscribir usuario en {actividad.nombre}", "form": form, "referer": referer, "back_label": "Volver al listado de actividades", "error_adapter": FormErrorAdapter(form)}
                 )
-            if actividad.usuarios.count() < actividad.plazas_disponibles:
-                nueva_inscripcion = form.save(commit=False)
-                nueva_inscripcion.actividad = actividad
-                nueva_inscripcion.save()
+            if actividad.plazas_disponibles > 0:
+                try:
+                    nueva_inscripcion = form.save(commit=False)
+                    nueva_inscripcion.actividad = actividad
+                    nueva_inscripcion.save()
+                except ValidationError as error:
+                    form.add_error('usuario', error)
+                    return render(
+                        request,
+                        "app_gestion_centro_cultural/shared/formulario_registro.html",
+                        {"titulo": f"Inscribir usuario en {actividad.nombre}", "form": form, "referer": referer, "back_label": "Volver al listado de actividades", "error_adapter": FormErrorAdapter(form)}
+                    )
                 return redirect("listar_inscripciones", id=id)
             else:
-                form.add_error(None, "No se pueden realizar más inscripciones: No hay plazas disponibles.")
+                form.add_error('usuario', "No se pueden realizar más inscripciones: no hay plazas disponibles.")
                 return render(
-                    request, 
-                    "app_gestion_centro_cultural/shared/formulario_registro.html", 
+                    request,
+                    "app_gestion_centro_cultural/shared/formulario_registro.html",
                     {"titulo": f"Inscribir usuario en {actividad.nombre}", "form": form, "referer": referer, "back_label": "Volver al listado de actividades", "error_adapter": FormErrorAdapter(form)}
                 )
     else:
-        form = InscripcionForm()
+        form = InscripcionForm(actividad=actividad)
     return render(
         request,
         "app_gestion_centro_cultural/shared/formulario_registro.html",
         {"titulo": f"Inscribir usuario en {actividad.nombre}",
-        "form": form, 
+        "form": form,
         "referer": referer,
         "back_label": "Volver al listado de actividades",
         "error_adapter": FormErrorAdapter(form)},
@@ -87,7 +96,7 @@ def confirmar_eliminar_inscripcion(request, actividad_id, usuario_id):
         referer = request.META.get("HTTP_REFERER", reverse("listar_inscripciones", args=[actividad_id]))
 
         if "confirmar" in request.POST:
-            actividad.usuarios.remove(usuario)
+            inscripcion.delete()
             return redirect("listar_inscripciones", id=actividad_id)
 
         return render(

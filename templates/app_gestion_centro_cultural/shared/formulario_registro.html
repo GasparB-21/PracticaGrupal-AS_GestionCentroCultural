@@ -224,6 +224,9 @@
 
             <form method="post" novalidate>
                 {% csrf_token %}
+                {% if next_url %}
+                    <input type="hidden" name="next" value="{{ next_url }}">
+                {% endif %}
 
                 {% if error_adapter.has_errors %}
                     <div class="error-summary" role="alert">

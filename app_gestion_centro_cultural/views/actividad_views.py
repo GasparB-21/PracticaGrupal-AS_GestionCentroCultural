@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 from ..models import Actividad
 from ..forms import ActividadForm
 from ..form_error_adapter import FormErrorAdapter
@@ -80,6 +81,17 @@ def filtrar_actividad_id(request, id):
 
 
 # Editar actividad
+def _get_safe_next_url(request):
+    next_url = request.POST.get("next") or request.GET.get("next")
+    if next_url and url_has_allowed_host_and_scheme(
+        url=next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        return next_url
+    return None
+
+
 def editar_actividad_id(request, id):
     try:
         actividad = Actividad.objects.get(id=id)
@@ -90,24 +102,28 @@ def editar_actividad_id(request, id):
             {"actividad": None},
         )
 
-    referer = request.META.get("HTTP_REFERER", reverse("filtrar_actividad", args=[id]))
+    next_url = _get_safe_next_url(request)
+    referer = next_url or request.META.get("HTTP_REFERER", reverse("filtrar_actividad", args=[id]))
+    back_label = "Volver a la eliminación del monitor" if next_url else "Volver al detalle de la actividad"
 
     if request.method == "POST":
         form = ActividadForm(request.POST, instance=actividad)
         if form.is_valid():
             form.save()
+            if next_url:
+                return redirect(next_url)
             return redirect("listar_actividades")
         return render(
             request,
             "app_gestion_centro_cultural/shared/formulario_registro.html",
-            {"titulo": "Editar actividad", "form": form, "referer": referer, "back_label": "Volver al detalle de la actividad", "error_adapter": FormErrorAdapter(form)},
+            {"titulo": "Editar actividad", "form": form, "referer": referer, "back_label": back_label, "error_adapter": FormErrorAdapter(form), "next_url": next_url},
         )
 
     form = ActividadForm(instance=actividad)
     return render(
         request,
         "app_gestion_centro_cultural/shared/formulario_registro.html",
-        {"titulo": "Editar actividad", "form": form, "referer": referer, "back_label": "Volver al detalle de la actividad", "error_adapter": FormErrorAdapter(form)},
+        {"titulo": "Editar actividad", "form": form, "referer": referer, "back_label": back_label, "error_adapter": FormErrorAdapter(form), "next_url": next_url},
     )
 
 

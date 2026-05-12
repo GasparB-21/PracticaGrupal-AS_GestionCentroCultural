@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirmar eliminación</title>
     <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
-    
+
     <style>
         body {
             background-color: #f8f9fa;
@@ -19,46 +19,100 @@
             justify-content: center;
             text-align: center;
         }
-
         h1 { font-weight: 800; letter-spacing: -1px; color: #212529; margin-bottom: 1.5rem; }
-
         .table-container {
-            background: white;
-            padding: 30px;
+            background: white; padding: 30px; border-radius: 12px;
+            border: 1px solid #e9ecef; box-shadow: 0 12px 28px rgba(33, 37, 41, 0.07);
+            margin: 0 auto; max-width: 760px;
+        }
+        .blocking-alert {
+            background-color: #fff8e1;
+            border: 1px solid #ffe08a;
             border-radius: 12px;
-            border: 1px solid #e9ecef;
-            box-shadow: 0 12px 28px rgba(33, 37, 41, 0.07);
-            margin: 0 auto;
-            max-width: 600px;
+            color: #5f4300;
+            padding: 22px;
+            text-align: left;
         }
-
+        .blocking-alert h2 {
+            color: #212529;
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .blocking-section-title {
+            color: #5f4300;
+            font-size: 0.82rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            margin: 18px 0 8px;
+            text-transform: uppercase;
+        }
+        .activity-list {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .activity-item {
+            align-items: center;
+            background-color: #fff;
+            border: 1px solid #f0e1aa;
+            border-radius: 10px;
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            padding: 14px 16px;
+        }
+        .activity-name {
+            color: #212529;
+            display: block;
+            font-weight: 800;
+            overflow-wrap: anywhere;
+        }
+        .activity-meta {
+            color: #6c757d;
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        .btn-edit-activity {
+            background-color: #0d6efd;
+            border-radius: 8px;
+            color: white !important;
+            flex: 0 0 auto;
+            font-weight: 700;
+            padding: 9px 14px;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .btn-edit-activity:hover {
+            background-color: #0b5ed7;
+            transform: translateY(-1px);
+        }
         .btn-confirmar {
-            display: inline-block;
-            background-color: #dc3545;
-            color: white !important;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: background 0.2s;
+            display: inline-block; background-color: #dc3545; color: white !important;
+            padding: 10px 20px; border: none; border-radius: 8px;
+            font-weight: 600; text-decoration: none; transition: background 0.2s;
         }
-
         .btn-confirmar:hover { background-color: #bb2d3b; }
-
         .btn-cancelar {
-            display: inline-block;
-            background-color: #6c757d;
-            color: white !important;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            margin-left: 10px;
-            transition: background 0.2s;
+            display: inline-block; background-color: #6c757d; color: white !important;
+            padding: 10px 20px; border-radius: 8px; font-weight: 600;
+            text-decoration: none; margin-left: 10px; transition: background 0.2s;
         }
-
+        .blocking-alert + form + .btn-cancelar { margin-top: 18px; }
         .btn-cancelar:hover { background-color: #5a6268; }
+        @media (max-width: 576px) {
+            .table-container { padding: 22px; }
+            .activity-item {
+                align-items: stretch;
+                flex-direction: column;
+                text-align: center;
+            }
+            .blocking-alert { text-align: center; }
+            .btn-cancelar { margin-left: 0; margin-top: 10px; }
+        }
     </style>
 </head>
 <body>
@@ -67,31 +121,48 @@
 
     <div class="table-container shadow-sm">
         {% if actividades_bloqueantes %}
-            <div class="alert alert-danger">
-                <h4 class="alert-heading">¡Acción Bloqueada!</h4>
-                <p>No puedes eliminar la sala <strong>"{{ sala.nombre }}"</strong> porque es la sede principal de las siguientes actividades:</p>
-                <hr>
-                <ul class="mb-0">
+            <div class="blocking-alert">
+                <h2>La sala tiene actividades asignadas</h2>
+                <p>
+                    Para eliminar <strong>"{{ sala.nombre }}"</strong>, primero cambia la sala principal en estas actividades.
+                </p>
+
+                <div class="blocking-section-title">Actividades donde es sala principal</div>
+                <div class="activity-list">
                     {% for actividad in actividades_bloqueantes %}
-                        <li>{{ actividad.nombre }} ({{ actividad.horario|date:"d/m/Y H:i" }})</li>
+                        <div class="activity-item">
+                            <div>
+                                <span class="activity-name">{{ actividad.nombre }}</span>
+                                <span class="activity-meta">{{ actividad.get_horario_display }} &middot; {{ actividad.hora|time:"H:i" }}</span>
+                            </div>
+                            <a href="{% url 'editar_actividad' actividad.id %}?next={{ request.get_full_path|urlencode }}" class="btn-edit-activity">
+                                Editar actividad
+                            </a>
+                        </div>
                     {% endfor %}
-                </ul>
-                <p class="mt-3">Por favor, reasigna estas actividades a otra sala antes de intentar eliminarla.</p>
+                </div>
+
+                <p class="mb-0">
+                    Al guardar cada edición volverás aquí. Cuando no quede ningún pendiente, podrás confirmar la eliminación.
+                </p>
             </div>
         {% else %}
             <p class="fs-5 mb-4">
                 ¿Estás seguro de que quieres eliminar la sala <strong>"{{ sala.nombre }}"</strong>?
             </p>
-            <form method="POST" action="{% url 'confirmar_eliminar_sala' sala.id %}" class="d-inline">
-                {% csrf_token %}
+        {% endif %}
+
+        <form method="POST" action="{% url 'confirmar_eliminar_sala' sala.id %}" class="d-inline">
+            {% csrf_token %}
+            {% if not actividades_bloqueantes %}
                 <button type="submit" name="confirmar" value="si" class="btn-confirmar">
                     Sí, eliminar
                 </button>
-            </form>
-        {% endif %}
-        
+            {% endif %}
+        </form>
+
         <a href="{{ referer }}" class="btn-cancelar">
-            {% if actividades_bloqueantes %}Volver{% else %}No, cancelar{% endif %}
+            {% if actividades_bloqueantes %}Volver{% else %}Cancelar y volver a la página anterior{% endif %}
         </a>
     </div>
     </main>

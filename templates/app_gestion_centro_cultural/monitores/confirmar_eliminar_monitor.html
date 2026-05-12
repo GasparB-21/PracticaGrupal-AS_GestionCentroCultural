@@ -23,7 +23,81 @@
         .table-container {
             background: white; padding: 30px; border-radius: 12px;
             border: 1px solid #e9ecef; box-shadow: 0 12px 28px rgba(33, 37, 41, 0.07);
-            margin: 0 auto; max-width: 600px;
+            margin: 0 auto; max-width: 760px;
+        }
+        .blocking-alert {
+            background-color: #fff8e1;
+            border: 1px solid #ffe08a;
+            border-radius: 12px;
+            color: #5f4300;
+            padding: 22px;
+            text-align: left;
+        }
+        .blocking-alert h2 {
+            color: #212529;
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .blocking-alert p {
+            margin-bottom: 12px;
+        }
+        .blocking-section-title {
+            color: #5f4300;
+            font-size: 0.82rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            margin: 18px 0 8px;
+            text-transform: uppercase;
+        }
+        .activity-list {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .activity-item {
+            align-items: center;
+            background-color: #fff;
+            border: 1px solid #f0e1aa;
+            border-radius: 10px;
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            padding: 14px 16px;
+        }
+        .activity-name {
+            color: #212529;
+            display: block;
+            font-weight: 800;
+            overflow-wrap: anywhere;
+        }
+        .activity-meta {
+            color: #6c757d;
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        .btn-edit-activity {
+            background-color: #0d6efd;
+            border-radius: 8px;
+            color: white !important;
+            flex: 0 0 auto;
+            font-weight: 700;
+            padding: 9px 14px;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .btn-edit-activity:hover {
+            background-color: #0b5ed7;
+            transform: translateY(-1px);
+        }
+        .btn-edit-room {
+            background-color: #0d6efd;
+        }
+        .btn-edit-room:hover {
+            background-color: #0b5ed7;
         }
         .btn-confirmar {
             display: inline-block; background-color: #dc3545; color: white !important;
@@ -36,7 +110,18 @@
             padding: 10px 20px; border-radius: 8px; font-weight: 600;
             text-decoration: none; margin-left: 10px; transition: background 0.2s;
         }
+        .blocking-alert + form + .btn-cancelar { margin-top: 18px; }
         .btn-cancelar:hover { background-color: #5a6268; }
+        @media (max-width: 576px) {
+            .table-container { padding: 22px; }
+            .activity-item {
+                align-items: stretch;
+                flex-direction: column;
+                text-align: center;
+            }
+            .blocking-alert { text-align: center; }
+            .btn-cancelar { margin-left: 0; margin-top: 10px; }
+        }
     </style>
 </head>
 <body>
@@ -44,14 +129,50 @@
     <h1>Confirmar eliminación</h1>
 
     <div class="table-container shadow-sm">
-        {% if actividades_bloqueantes %}
-            <div class="alert alert-warning">
-                <p><strong>Atención:</strong> Este monitor no puede ser eliminado hasta que reasignes o borres las siguientes actividades:</p>
-                <ul>
-                    {% for actividad in actividades_bloqueantes %}
-                        <li>{{ actividad.nombre }} ({{ actividad.horario|date:"d/m/Y" }})</li>
-                    {% endfor %}
-                </ul>
+        {% if actividades_bloqueantes or salas_bloqueantes %}
+            <div class="blocking-alert">
+                <h2>El monitor todavía tiene asignaciones</h2>
+                <p>
+                    Para eliminar a <strong>{{ monitor.nombre }}</strong>, primero reasigna los objetos pendientes a otro monitor o elimínalos.
+                </p>
+
+                {% if actividades_bloqueantes %}
+                    <div class="blocking-section-title">Actividades donde es monitor</div>
+                    <div class="activity-list">
+                        {% for actividad in actividades_bloqueantes %}
+                            <div class="activity-item">
+                                <div>
+                                    <span class="activity-name">{{ actividad.nombre }}</span>
+                                    <span class="activity-meta">{{ actividad.get_horario_display }} &middot; {{ actividad.hora|time:"H:i" }}</span>
+                                </div>
+                                <a href="{% url 'editar_actividad' actividad.id %}?next={{ request.get_full_path|urlencode }}" class="btn-edit-activity">
+                                    Editar actividad
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if salas_bloqueantes %}
+                    <div class="blocking-section-title">Salas donde es responsable</div>
+                    <div class="activity-list">
+                        {% for sala in salas_bloqueantes %}
+                            <div class="activity-item">
+                                <div>
+                                    <span class="activity-name">{{ sala.nombre }}</span>
+                                    <span class="activity-meta">Capacidad {{ sala.capacidad }} &middot; {{ sala.ubicacion }}</span>
+                                </div>
+                                <a href="{% url 'editar_sala' sala.id %}?next={{ request.get_full_path|urlencode }}" class="btn-edit-activity btn-edit-room">
+                                    Editar sala
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <p class="mb-0">
+                    Al guardar cada edición volverás aquí. Cuando no quede ningún pendiente, podrás confirmar la eliminación.
+                </p>
             </div>
         {% else %}
             <p class="fs-5 mb-4">
@@ -61,7 +182,7 @@
 
         <form method="POST" action="{% url 'confirmar_eliminar_monitor' monitor.id %}" class="d-inline">
             {% csrf_token %}
-            {% if not actividades_bloqueantes %}
+            {% if not actividades_bloqueantes and not salas_bloqueantes %}
                 <button type="submit" name="confirmar" value="si" class="btn-confirmar">
                     Sí, eliminar
                 </button>
@@ -69,7 +190,7 @@
         </form>
         
         <a href="{{ referer }}" class="btn-cancelar">
-            Cancelar y volver a la página anterior
+            {% if actividades_bloqueantes or salas_bloqueantes %}Volver{% else %}Cancelar y volver a la página anterior{% endif %}
         </a>
     </div>
     </main>

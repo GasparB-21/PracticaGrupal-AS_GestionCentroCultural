@@ -1,5 +1,5 @@
 from django import forms
-from .models import Usuario, Monitor, Sala, Actividad, Inscripcion
+from .models import Usuario, Monitor, Sala, Actividad, Inscripcion, ActividadSalaSecundaria
 
 
 SPANISH_FIELD_ERROR_MESSAGES = {
@@ -50,12 +50,35 @@ class SalaForm(SpanishValidationMessagesMixin, forms.ModelForm):
             },
         }
 
+    def clean_responsable(self):
+        responsable = self.cleaned_data.get('responsable')
+        if not responsable:
+            return responsable
+
+        sala_existente = Sala.objects.filter(responsable=responsable).exclude(pk=self.instance.pk).first()
+        if sala_existente:
+            raise forms.ValidationError(
+                f'La sala "{sala_existente.nombre}" ya tiene a "{responsable.nombre}" como responsable.'
+            )
+
+        return responsable
+
 
 class ActividadForm(SpanishValidationMessagesMixin, forms.ModelForm):
     salas_secundarias = forms.ModelMultipleChoiceField(
         queryset=Sala.objects.all(),
         required=False,
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox-list'}),
+    )
+    tipo = forms.ChoiceField(
+        choices=[('', '---------')] + list(Actividad._meta.get_field('tipo').choices),
+        required=True,
+        error_messages={'required': 'Selecciona un tipo de actividad.'},
+    )
+    horario = forms.ChoiceField(
+        choices=[('', '---------')] + list(Actividad._meta.get_field('horario').choices),
+        required=True,
+        error_messages={'required': 'Selecciona un día de la semana.'},
     )
 
     class Meta:
@@ -95,8 +118,77 @@ class ActividadForm(SpanishValidationMessagesMixin, forms.ModelForm):
             },
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.instance.pk and not self.is_bound:
+            self.fields['tipo'].initial = ''
+            self.fields['horario'].initial = ''
+            self.fields['hora'].initial = '08:00'
+
+    def _post_clean(self):
+        self.instance._skip_model_overlap_validation = True
+        try:
+            super()._post_clean()
+        finally:
+            if hasattr(self.instance, '_skip_model_overlap_validation'):
+                delattr(self.instance, '_skip_model_overlap_validation')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        sala_principal = cleaned_data.get('sala_principal')
+        salas_secundarias = cleaned_data.get('salas_secundarias')
+        horario = cleaned_data.get('horario')
+        hora = cleaned_data.get('hora')
+
+        if not sala_principal or not horario or not hora:
+            return cleaned_data
+
+        salas_secundarias_ids = set()
+        if salas_secundarias:
+            salas_secundarias_ids = {sala.id for sala in salas_secundarias}
+
+        if sala_principal.id in salas_secundarias_ids:
+            self.add_error(
+                'salas_secundarias',
+                'Una actividad no puede tener la misma sala como principal y secundaria.',
+            )
+
+        actividad_id = self.instance.pk
+        salas_a_validar = [sala_principal]
+        if salas_secundarias:
+            salas_a_validar.extend(salas_secundarias)
+
+        for sala in salas_a_validar:
+            actividad_solapada_principal = Actividad.objects.filter(
+                horario=horario,
+                hora=hora,
+                sala_principal=sala,
+            ).exclude(pk=actividad_id).exists()
+
+            actividad_solapada_secundaria = ActividadSalaSecundaria.objects.filter(
+                sala=sala,
+                actividad__horario=horario,
+                actividad__hora=hora,
+            ).exclude(actividad_id=actividad_id).exists()
+
+            if actividad_solapada_principal or actividad_solapada_secundaria:
+                mensaje = f'La sala "{sala.nombre}" ya está asignada a otra actividad en el mismo día y hora.'
+                if sala == sala_principal:
+                    self.add_error('sala_principal', mensaje)
+                else:
+                    self.add_error('salas_secundarias', mensaje)
+
+        return cleaned_data
+
 
 class InscripcionForm(SpanishValidationMessagesMixin, forms.ModelForm):
+    def __init__(self, *args, actividad=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if actividad:
+            self.fields['usuario'].queryset = Usuario.objects.exclude(
+                inscripciones__actividad=actividad
+            )
+
     class Meta:
         model = Inscripcion
         fields = ['usuario']
