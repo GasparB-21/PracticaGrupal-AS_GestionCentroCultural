@@ -49,10 +49,10 @@ def formulario_registro_usuario(request):
         if form.is_valid():
             form.save()
             return redirect('listar_usuarios')
-        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Página de registro de usuarios', 'form': form, 'referer': referer, 'error_adapter': FormErrorAdapter(form)})
+        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Registrar un usuario', 'form': form, 'referer': referer, 'back_label': 'Volver al listado de usuarios', 'error_adapter': FormErrorAdapter(form)})
     else:
         form = UsuarioForm()
-        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Página de registro de usuarios', 'form': form, 'referer': referer, 'error_adapter': FormErrorAdapter(form)})
+        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Registrar un usuario', 'form': form, 'referer': referer, 'back_label': 'Volver al listado de usuarios', 'error_adapter': FormErrorAdapter(form)})
 
 # Filtrar usuario por id
 def filtrar_usuario_id(request, id):
@@ -83,10 +83,10 @@ def editar_usuario_id(request, id):
         if form.is_valid():
             form.save()
             return redirect('listar_usuarios')
-        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Editar usuario', 'form': form, 'referer': referer, 'error_adapter': FormErrorAdapter(form)})
+        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Editar usuario', 'form': form, 'referer': referer, 'back_label': 'Volver al detalle del usuario', 'error_adapter': FormErrorAdapter(form)})
     else:
         form = UsuarioForm(instance=usuario)
-        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Editar usuario', 'form': form, 'referer': referer, 'error_adapter': FormErrorAdapter(form)})
+        return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {'titulo': 'Editar usuario', 'form': form, 'referer': referer, 'back_label': 'Volver al detalle del usuario', 'error_adapter': FormErrorAdapter(form)})
     
 # Confirmar eliminar usuario
 #

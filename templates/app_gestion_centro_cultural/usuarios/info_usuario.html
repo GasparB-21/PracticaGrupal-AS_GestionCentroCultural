@@ -11,12 +11,40 @@
         body { 
             background-color: #f8f9fa; 
             color: #333;
-            padding-top: 40px;
+            min-height: 100vh;
+            padding: 54px 16px 40px;
             font-family: 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        h1 { font-weight: 800; letter-spacing: -1px; color: #212529; margin-bottom: 1.5rem; }
+
+        h2 {
+            color: #212529;
+            font-size: 1.05rem;
+            font-weight: 800;
+            margin: 26px 0 14px;
+            text-align: center;
+        }
+
+        .detail-page {
+            max-width: 720px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .detail-id {
+            color: #6c757d;
+            font-size: 0.92rem;
+            font-weight: 600;
+            margin-top: 4px;
+            text-align: center;
+        }
         
         .btn-volver {
+            position: fixed;
+            top: 14px;
+            left: 14px;
             display: inline-flex;
             align-items: center;
             padding: 8px 16px;
@@ -26,45 +54,119 @@
             border-radius: 8px;
             font-size: 0.9rem;
             font-weight: 500;
-            margin-bottom: 20px;
+            z-index: 10;
             transition: background 0.2s;
         }
         .btn-volver:hover { background-color: #5a6268; }
 
-        .table-container {
+        .detail-card {
             background: white;
-            padding: 30px;
-            border-radius: 12px;
+            padding: 32px;
+            border-radius: 14px;
             border: 1px solid #e9ecef;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            box-shadow: 0 12px 28px rgba(33, 37, 41, 0.07);
             margin-bottom: 20px;
-            max-width: 600px;
+        }
+
+        .detail-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0d6efd;
+            text-align: center;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .detail-item {
+            background-color: #f8f9fa;
+            border: 1px solid #edf0f3;
+            border-radius: 10px;
+            padding: 14px 16px;
+            text-align: center;
+        }
+
+        .detail-item-full {
+            grid-column: 1 / -1;
+        }
+
+        .detail-label {
+            color: #6c757d;
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .detail-value {
+            color: #212529;
+            font-size: 1rem;
+            font-weight: 600;
+            overflow-wrap: anywhere;
         }
 
         .btn-action {
-            background: none;
+            background: #f8f9fa;
             border: none;
-            padding: 5px 10px;
-            border-radius: 6px;
-            transition: background 0.2s;
+            padding: 9px 14px;
+            border-radius: 8px;
+            transition: background 0.2s, transform 0.2s;
             text-decoration: none;
             color: inherit;
         }
-        .btn-action:hover { background-color: #f8f9fa; }
+        .btn-action:hover { background-color: #e9ecef; transform: translateY(-1px); }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 26px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        @media (max-width: 576px) {
+            .detail-card { padding: 24px; }
+            .detail-grid { grid-template-columns: 1fr; }
+            .actions { align-items: stretch; flex-direction: column; }
+        }
     </style>
 </head>
-<body class="container">
+<body>
+    <main class="detail-page">
     {% if usuario %}
-        <a href="{% url 'listar_usuarios' %}" class="btn-volver">← Volver</a>
-        <h1>Información del usuario</h1>
+        <a href="{% url 'listar_usuarios' %}" class="btn-volver">← Volver al listado de usuarios</a>
 
-        <div class="table-container shadow-sm">
-            <h3><strong>Nombre:</strong> {{ usuario.nombre }}</h3>
-            <p class="mt-3"><strong>Edad:</strong> {{ usuario.edad }}</p>
-            <p><strong>Email:</strong> {{ usuario.email }}</p>
-            <p><strong>Teléfono:</strong> {{ usuario.telefono }}</p>
+        <div class="detail-card">
+            <div class="detail-title">{{ usuario.nombre }}</div>
+            <div class="detail-id">ID del usuario: {{ usuario.id }}</div>
 
-            <div class="mt-4 pt-3 border-top">
+            <h2>Datos del usuario</h2>
+            <div class="detail-grid">
+                <div class="detail-item detail-item-full">
+                    <span class="detail-label">Edad</span>
+                    <span class="detail-value">{{ usuario.edad }}</span>
+                </div>
+
+                <div class="detail-item-full">
+                    <h2>Datos de contacto</h2>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Email</span>
+                    <span class="detail-value">{{ usuario.email }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Teléfono</span>
+                    <span class="detail-value">{{ usuario.telefono }}</span>
+                </div>
+            </div>
+
+            <div class="actions">
                 <a href="{% url 'editar_usuario' usuario.id %}" class="btn-action">✏️ Editar</a>
                 
                 <form method="POST" action="{% url 'confirmar_eliminar_usuario' usuario.id %}" class="d-inline">
@@ -76,5 +178,6 @@
     {% else %}
         <div class="alert alert-info">Usuario no encontrado</div>
     {% endif %}
+    </main>
 </body>
 </html>

@@ -42,14 +42,14 @@ def formulario_registro_sala(request):
         return render(
             request,
             "app_gestion_centro_cultural/shared/formulario_registro.html",
-            {"titulo": "Página de registro de salas", "form": form, "referer": referer, "error_adapter": FormErrorAdapter(form)},
+            {"titulo": "Registrar una sala", "form": form, "referer": referer, "back_label": "Volver al listado de salas", "error_adapter": FormErrorAdapter(form)},
         )
 
     form = SalaForm()
     return render(
         request,
         "app_gestion_centro_cultural/shared/formulario_registro.html",
-        {"titulo": "Página de registro de salas", "form": form, "referer": referer, "error_adapter": FormErrorAdapter(form)},
+        {"titulo": "Registrar una sala", "form": form, "referer": referer, "back_label": "Volver al listado de salas", "error_adapter": FormErrorAdapter(form)},
     )
 
 
@@ -88,14 +88,14 @@ def editar_sala_id(request, id):
         return render(
             request,
             "app_gestion_centro_cultural/shared/formulario_registro.html",
-            {"titulo": "Editar sala", "form": form, "referer": referer, "error_adapter": FormErrorAdapter(form)},
+            {"titulo": "Editar sala", "form": form, "referer": referer, "back_label": "Volver al detalle de la sala", "error_adapter": FormErrorAdapter(form)},
         )
 
     form = SalaForm(instance=sala)
     return render(
         request,
         "app_gestion_centro_cultural/shared/formulario_registro.html",
-        {"titulo": "Editar sala", "form": form, "referer": referer, "error_adapter": FormErrorAdapter(form)},
+        {"titulo": "Editar sala", "form": form, "referer": referer, "back_label": "Volver al detalle de la sala", "error_adapter": FormErrorAdapter(form)},
     )
 
 

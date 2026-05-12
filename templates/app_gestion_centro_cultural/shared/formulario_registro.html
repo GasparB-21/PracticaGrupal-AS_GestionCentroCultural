@@ -11,19 +11,31 @@
         body { 
             background-color: #f8f9fa; 
             color: #333;
-            padding-top: 30px; 
-            padding-bottom: 50px;
+            min-height: 100vh;
+            padding: 64px 16px 40px;
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         h2 { 
             font-weight: 800; 
             letter-spacing: -1px; 
             color: #212529;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.8rem;
+            text-align: center;
+        }
+
+        .form-page {
+            width: 100%;
+            max-width: 560px;
         }
 
         .btn-back {
+            position: fixed;
+            top: 14px;
+            left: 14px;
             display: inline-flex;
             align-items: center;
             padding: 8px 16px;
@@ -33,7 +45,7 @@
             border-radius: 8px;
             font-size: 0.9rem;
             font-weight: 500;
-            margin-bottom: 15px;
+            z-index: 10;
             transition: background-color 0.2s;
         }
         
@@ -43,42 +55,92 @@
 
         .form-container {
             background: white;
-            padding: 30px;
-            border-radius: 15px;
+            padding: 34px;
+            border-radius: 14px;
             border: 1px solid #e9ecef;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-            max-width: 500px;
-            margin-top: 0;
+            box-shadow: 0 12px 28px rgba(33, 37, 41, 0.07);
+            margin: 0 auto;
         }
 
         .field-group {
             margin-bottom: 1.2rem;
+            text-align: center;
         }
 
         label {
             display: block;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.85rem;
-            color: #4b5563;
-            margin-bottom: 6px;
+            color: #6c757d;
+            margin-bottom: 7px;
+            text-transform: uppercase;
         }
 
-        input[type="text"], input[type="email"], input[type="number"], select, textarea {
+        input[type="text"], input[type="email"], input[type="number"], input[type="datetime-local"], input[type="time"], select, textarea {
             display: block;
             width: 100%;
             padding: 10px 14px;
             font-size: 0.95rem;
             color: #212529;
-            background-color: #fff;
-            border: 1px solid #dee2e6;
+            text-align: center;
+            background-color: #f8f9fa;
+            border: 0;
             border-radius: 10px;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
 
-        input:focus {
-            border-color: #86b7fe;
+        textarea {
+            min-height: 82px;
+            text-align: left;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            background-color: #fff;
             outline: 0;
             box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.1);
+        }
+
+        input[type="time"] {
+            margin: 0 auto;
+            max-width: 220px;
+        }
+
+        .field-help {
+            color: #6c757d;
+            display: block;
+            font-size: 0.82rem;
+            margin-top: 6px;
+        }
+
+        .checkbox-list {
+            background-color: #f8f9fa;
+            border: 0;
+            border-radius: 10px;
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 10px 14px;
+            text-align: center;
+        }
+
+        .checkbox-list div {
+            margin: 6px 0;
+        }
+
+        .checkbox-list label {
+            align-items: center;
+            display: flex;
+            font-size: 0.92rem;
+            font-weight: 500;
+            gap: 8px;
+            justify-content: center;
+            margin: 0;
+            text-transform: none;
+        }
+
+        .checkbox-list input {
+            accent-color: #0d6efd;
         }
 
         .field-group.has-error input,
@@ -141,62 +203,69 @@
             transform: translateY(-1px);
             box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
         }
+
+        @media (max-width: 576px) {
+            body { align-items: flex-start; }
+            .form-container { padding: 24px; }
+        }
     </style>
 </head>
-<body class="container">
+<body>
 
-    <div class="row">
-        <div class="col-12">
-            {% if referer %}
-                <a href="{{ referer }}" class="btn-back">
-                    ← Volver
-                </a>
-            {% endif %}
+    <main class="form-page">
+        {% if referer %}
+            <a href="{{ referer }}" class="btn-back">
+                ← {{ back_label|default:"Volver a la página anterior" }}
+            </a>
+        {% endif %}
 
-            <div class="form-container">
-                <h2>{{ titulo }}</h2>
+        <div class="form-container">
+            <h2>{{ titulo }}</h2>
 
-                <form method="post" novalidate>
-                    {% csrf_token %}
+            <form method="post" novalidate>
+                {% csrf_token %}
 
-                    {% if error_adapter.has_errors %}
-                        <div class="error-summary" role="alert">
-                            <div class="error-summary-title">Revisa los datos del formulario</div>
+                {% if error_adapter.has_errors %}
+                    <div class="error-summary" role="alert">
+                        <div class="error-summary-title">Revisa los datos del formulario</div>
 
-                            {% if error_adapter.get_global_errors %}
-                                <ul>
-                                    {% for error in error_adapter.get_global_errors %}
-                                        <li>{{ error }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% else %}
-                                <span>Hay campos con errores de validación.</span>
-                            {% endif %}
-                        </div>
-                    {% endif %}
-                    
-                    {% for field_data in error_adapter.get_fields %}
-                        <div class="field-group{% if field_data.has_errors %} has-error{% endif %}">
-                            <label for="{{ field_data.field.id_for_label }}">{{ field_data.field.label }}</label>
-                            {{ field_data.field }}
+                        {% if error_adapter.get_global_errors %}
+                            <ul>
+                                {% for error in error_adapter.get_global_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <span>Hay campos con errores de validación.</span>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                
+                {% for field_data in error_adapter.get_fields %}
+                    <div class="field-group{% if field_data.has_errors %} has-error{% endif %}">
+                        <label for="{{ field_data.field.id_for_label }}">{{ field_data.field.label }}</label>
+                        {{ field_data.field }}
 
-                            {% if field_data.errors %}
-                                <ul class="field-errors">
-                                    {% for error in field_data.errors %}
-                                        <li>{{ error }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
+                        {% if field_data.field.help_text %}
+                            <span class="field-help">{{ field_data.field.help_text }}</span>
+                        {% endif %}
 
-                    <button type="submit" class="btn-submit">
-                        Guardar registro
-                    </button>
-                </form>
-            </div>
+                        {% if field_data.errors %}
+                            <ul class="field-errors">
+                                {% for error in field_data.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="btn-submit">
+                    Guardar registro
+                </button>
+            </form>
         </div>
-    </div>
+    </main>
 
     <script src="{% static 'bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
 </body>

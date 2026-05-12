@@ -1,4 +1,4 @@
-{% load static %}
+{% load static i18n %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -20,6 +20,7 @@
             letter-spacing: -1px; 
             color: #212529;
             margin-bottom: 1.5rem;
+            text-align: center;
         }
 
         .btn-volver {
@@ -45,7 +46,20 @@
             margin-bottom: 30px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 15px;
+        }
+
+        .filter-title {
+            color: #6c757d;
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .filter-form {
+            margin-left: auto;
         }
 
         .table-container {
@@ -66,12 +80,14 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             padding: 15px;
+            text-align: center;
         }
 
         .table tbody td {
             padding: 15px;
             vertical-align: middle;
             border-bottom: 1px solid #f0f2f5;
+            text-align: center;
         }
 
         .btn-action {
@@ -85,14 +101,27 @@
         }
         .btn-action:hover { background-color: #f8f9fa; color: inherit; }
 
+        .field-link {
+            color: #0d6efd;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        .field-link:hover { color: #0a58ca; }
+
+        .activity-type {
+            margin-top: 8px;
+        }
+
         .btn-nuevo {
-            display: inline-block;
+            display: block;
+            width: max-content;
             background-color: #0d6efd;
             color: white;
             padding: 12px 20px;
             border-radius: 10px;
             text-decoration: none;
             font-weight: 600;
+            margin: 0 auto;
             transition: all 0.2s;
         }
         .btn-nuevo:hover { background-color: #0b5ed7; color: white; transform: translateY(-2px); }
@@ -107,7 +136,8 @@
     <h1>Listado de actividades</h1>
 
     <section class="filter-section shadow-sm">
-        <form method="GET" action="{% url 'listar_actividades' %}" class="d-flex align-items-center gap-3 w-100">
+        <div class="filter-title">Filtrar por:</div>
+        <form method="GET" action="{% url 'listar_actividades' %}" class="filter-form d-flex align-items-center justify-content-end gap-3 flex-wrap">
             
             <label for="id" class="fw-bold small mb-0">ID Actividad:</label>
             <input type="number" name="id" id="id" min="0"
@@ -157,17 +187,17 @@
                         <tr>
                             <td class="text-muted small">#{{ actividad.id }}</td>
                             <td>
-                                <a href="{% url 'filtrar_actividad' actividad.id %}" class="text-decoration-none fw-bold">
+                                <a href="{% url 'filtrar_actividad' actividad.id %}" class="field-link fw-bold">
                                     {{ actividad.nombre }}
                                 </a>
-                                <div class="text-muted small">{{ actividad.get_tipo_display }}</div>
+                                <div class="text-muted small activity-type">{{ actividad.get_tipo_display }}</div>
                             </td>
                             <td class="small">
-                                {{ actividad.horario|date:"l H:i" }}<br>
+                                {{ actividad.get_horario_display }} {{ actividad.hora|time:"H:i" }}<br>
                                 <span class="text-muted">{{ actividad.duracion }} min</span>
                             </td>
                             <td>
-                                <a href="{% url 'filtrar_monitor' actividad.monitor.id %}" class="text-decoration-none fw-bold">
+                                <a href="{% url 'filtrar_monitor' actividad.monitor.id %}" class="field-link fw-bold">
                                     {{ actividad.monitor.nombre }}
                                 </a>
                             </td>

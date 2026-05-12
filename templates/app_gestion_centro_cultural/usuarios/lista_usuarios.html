@@ -20,6 +20,7 @@
             letter-spacing: -1px; 
             color: #212529;
             margin-bottom: 1.5rem;
+            text-align: center;
         }
 
 
@@ -46,7 +47,20 @@
             margin-bottom: 30px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 15px;
+        }
+
+        .filter-title {
+            color: #6c757d;
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .filter-form {
+            margin-left: auto;
         }
 
         .table-container {
@@ -66,12 +80,14 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             padding: 15px;
+            text-align: center;
         }
 
         .table tbody td {
             padding: 15px;
             vertical-align: middle;
             border-bottom: 1px solid #f0f2f5;
+            text-align: center;
         }
 
         .btn-action {
@@ -79,18 +95,28 @@
             border: none;
             padding: 5px 10px;
             border-radius: 6px;
+            text-decoration: none;
             transition: background 0.2s;
         }
         .btn-action:hover { background-color: #f8f9fa; }
 
+        .field-link {
+            color: #0d6efd;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        .field-link:hover { color: #0a58ca; }
+
         .btn-nuevo {
-            display: inline-block;
+            display: block;
+            width: max-content;
             background-color: #0d6efd;
             color: white;
             padding: 12px 20px;
             border-radius: 10px;
             text-decoration: none;
             font-weight: 600;
+            margin: 0 auto;
             transition: all 0.2s;
         }
         .btn-nuevo:hover { background-color: #0b5ed7; color: white; transform: translateY(-2px); }
@@ -105,7 +131,8 @@
     <h1>Listado de usuarios</h1>
 
     <section class="filter-section shadow-sm">
-        <form method="GET" action="{% url 'listar_usuarios' %}" class="d-flex align-items-center gap-3 w-100">
+        <div class="filter-title">Filtrar por:</div>
+        <form method="GET" action="{% url 'listar_usuarios' %}" class="filter-form d-flex align-items-center justify-content-end gap-3">
             <label for="id" class="fw-bold small mb-0">Usuario ID:</label>
             <input type="number" name="id" id="id" min="0"
                    class="form-control form-control-sm w-auto" 
@@ -138,7 +165,7 @@
                         <tr>
                             <td class="text-muted small">#{{ usuario.id }}</td>
                             <td>
-                                <a href="{% url 'filtrar_usuario' usuario.id %}" class="text-decoration-none fw-bold">
+                                <a href="{% url 'filtrar_usuario' usuario.id %}" class="field-link fw-bold">
                                     {{ usuario.nombre }}
                                 </a>
                             </td>

@@ -42,7 +42,7 @@ def inscribir_usuario_actividad(request, id):
                 return render(
                     request, 
                     "app_gestion_centro_cultural/shared/formulario_registro.html", 
-                    {"titulo": f"Inscribir usuario en {actividad.nombre}", "form": form, "referer": referer, "error_adapter": FormErrorAdapter(form)}
+                    {"titulo": f"Inscribir usuario en {actividad.nombre}", "form": form, "referer": referer, "back_label": "Volver al listado de actividades", "error_adapter": FormErrorAdapter(form)}
                 )
             if actividad.usuarios.count() < actividad.plazas_disponibles:
                 nueva_inscripcion = form.save(commit=False)
@@ -54,7 +54,7 @@ def inscribir_usuario_actividad(request, id):
                 return render(
                     request, 
                     "app_gestion_centro_cultural/shared/formulario_registro.html", 
-                    {"titulo": f"Inscribir usuario en {actividad.nombre}", "form": form, "referer": referer, "error_adapter": FormErrorAdapter(form)}
+                    {"titulo": f"Inscribir usuario en {actividad.nombre}", "form": form, "referer": referer, "back_label": "Volver al listado de actividades", "error_adapter": FormErrorAdapter(form)}
                 )
     else:
         form = InscripcionForm()
@@ -64,6 +64,7 @@ def inscribir_usuario_actividad(request, id):
         {"titulo": f"Inscribir usuario en {actividad.nombre}",
         "form": form, 
         "referer": referer,
+        "back_label": "Volver al listado de actividades",
         "error_adapter": FormErrorAdapter(form)},
     )
 

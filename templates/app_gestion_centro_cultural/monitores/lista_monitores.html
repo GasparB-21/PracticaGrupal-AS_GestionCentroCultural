@@ -20,6 +20,7 @@
             letter-spacing: -1px; 
             color: #212529;
             margin-bottom: 1.5rem;
+            text-align: center;
         }
 
         .btn-volver {
@@ -46,7 +47,20 @@
             margin-bottom: 30px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 15px;
+        }
+
+        .filter-title {
+            color: #6c757d;
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .filter-form {
+            margin-left: auto;
         }
 
         .table-container {
@@ -66,12 +80,14 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             padding: 15px;
+            text-align: center;
         }
 
         .table tbody td {
             padding: 15px;
             vertical-align: middle;
             border-bottom: 1px solid #f0f2f5;
+            text-align: center;
         }
 
         .btn-action {
@@ -85,14 +101,23 @@
         }
         .btn-action:hover { background-color: #f8f9fa; }
 
+        .field-link {
+            color: #0d6efd;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        .field-link:hover { color: #0a58ca; }
+
         .btn-nuevo {
-            display: inline-block;
+            display: block;
+            width: max-content;
             background-color: #0d6efd;
             color: white !important;
             padding: 12px 20px;
             border-radius: 10px;
             text-decoration: none;
             font-weight: 600;
+            margin: 0 auto;
             transition: all 0.2s;
         }
         .btn-nuevo:hover { 
@@ -111,7 +136,8 @@
     <h1>Listado de monitores</h1>
 
     <section class="filter-section shadow-sm">
-        <form method="GET" action="{% url 'listar_monitores' %}" class="d-flex align-items-center gap-3 w-100">
+        <div class="filter-title">Filtrar por:</div>
+        <form method="GET" action="{% url 'listar_monitores' %}" class="filter-form d-flex align-items-center justify-content-end gap-3">
             <label for="id" class="fw-bold small mb-0">Monitor ID:</label>
             <input type="number" name="id" id="id" 
                    class="form-control form-control-sm w-auto" 
@@ -143,11 +169,11 @@
                         <tr>
                             <td class="text-muted small">#{{ monitor.id }}</td>
                             <td>
-                                <a href="{% url 'filtrar_monitor' monitor.id %}" class="text-decoration-none fw-bold">
+                                <a href="{% url 'filtrar_monitor' monitor.id %}" class="field-link fw-bold">
                                     {{ monitor.nombre }}
                                 </a>
                             </td>
-                            <td>{{ monitor.especializacion }}</td>
+                            <td>{{ monitor.get_especializacion_display }}</td>
                             <td class="text-center">
                                 <span class="badge bg-light text-dark border">{{ monitor.numero_actividades_asignadas }}</span>
                             </td>

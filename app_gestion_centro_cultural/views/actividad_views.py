@@ -48,14 +48,14 @@ def formulario_registro_actividad(request):
         return render(
             request,
             "app_gestion_centro_cultural/shared/formulario_registro.html",
-            {"titulo": "Página de registro de actividades", "form": form, "referer": referer, "error_adapter": FormErrorAdapter(form)},
+            {"titulo": "Registrar una actividad", "form": form, "referer": referer, "back_label": "Volver al listado de actividades", "error_adapter": FormErrorAdapter(form)},
         )
 
     form = ActividadForm()
     return render(
         request,
         "app_gestion_centro_cultural/shared/formulario_registro.html",
-        {"titulo": "Página de registro de actividades", "form": form, "referer": referer, "error_adapter": FormErrorAdapter(form)},
+        {"titulo": "Registrar una actividad", "form": form, "referer": referer, "back_label": "Volver al listado de actividades", "error_adapter": FormErrorAdapter(form)},
     )
 
 
@@ -100,14 +100,14 @@ def editar_actividad_id(request, id):
         return render(
             request,
             "app_gestion_centro_cultural/shared/formulario_registro.html",
-            {"titulo": "Editar actividad", "form": form, "referer": referer, "error_adapter": FormErrorAdapter(form)},
+            {"titulo": "Editar actividad", "form": form, "referer": referer, "back_label": "Volver al detalle de la actividad", "error_adapter": FormErrorAdapter(form)},
         )
 
     form = ActividadForm(instance=actividad)
     return render(
         request,
         "app_gestion_centro_cultural/shared/formulario_registro.html",
-        {"titulo": "Editar actividad", "form": form, "referer": referer, "error_adapter": FormErrorAdapter(form)},
+        {"titulo": "Editar actividad", "form": form, "referer": referer, "back_label": "Volver al detalle de la actividad", "error_adapter": FormErrorAdapter(form)},
     )
 
 

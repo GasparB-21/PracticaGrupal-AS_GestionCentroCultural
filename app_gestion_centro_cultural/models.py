@@ -1,12 +1,36 @@
 from django.db import models
-from django.core.validators import MaxValueValidator
+from django.core.validators import MaxValueValidator, RegexValidator
+
+
+telefono_validator = RegexValidator(
+    regex=r"^(\+\d+\s)?\d{3}\s\d{3}\s\d{3}$",
+    message="El teléfono debe tener el formato '+num xxx xxx xxx' o 'xxx xxx xxx'.",
+)
+
+
+class TipoActividad(models.TextChoices):
+    DANZA = "DANZA", "Danza"
+    TEATRO = "TEATRO", "Teatro"
+    MUSICA = "MUSICA", "Música"
+    PINTURA = "PINTURA", "Pintura"
+    OTRO = "OTRO", "Otro"
+
+
+class DiaSemana(models.TextChoices):
+    LUNES = "LUNES", "Lunes"
+    MARTES = "MARTES", "Martes"
+    MIERCOLES = "MIERCOLES", "Miércoles"
+    JUEVES = "JUEVES", "Jueves"
+    VIERNES = "VIERNES", "Viernes"
+    SABADO = "SABADO", "Sábado"
+    DOMINGO = "DOMINGO", "Domingo"
 
 
 class Usuario(models.Model):
     nombre = models.CharField(max_length=120)
     edad = models.PositiveIntegerField(validators=[MaxValueValidator(130)])
     email = models.EmailField(unique=True)
-    telefono = models.PositiveIntegerField(validators=[MaxValueValidator(999999999)])
+    telefono = models.CharField(max_length=20, unique=True, validators=[telefono_validator])
 
     def __str__(self) -> str:
         return self.nombre
@@ -14,7 +38,7 @@ class Usuario(models.Model):
 
 class Monitor(models.Model):
     nombre = models.CharField(max_length=120)
-    especializacion = models.CharField(max_length=120)
+    especializacion = models.CharField(max_length=20, choices=TipoActividad.choices)
 
     def __str__(self) -> str:
         return self.nombre
@@ -47,21 +71,14 @@ class Sala(models.Model):
 
 
 class Actividad(models.Model):
-    # Definimos los tipos de actividad como una enumeración de texto para garantizar que solo se puedan asignar valores válidos.
-    class TipoActividad(models.TextChoices):
-        DANZA = "DANZA", "Danza"
-        TEATRO = "TEATRO", "Teatro"
-        MUSICA = "MUSICA", "Música"
-        PINTURA = "PINTURA", "Pintura"
-        OTRO = "OTRO", "Otro"
-
     nombre = models.CharField(max_length=120)
     tipo = models.CharField(
                                 max_length=20,
                                 choices=TipoActividad.choices,
                                 default=TipoActividad.OTRO,
                             )
-    horario = models.DateTimeField()
+    horario = models.CharField(max_length=10, choices=DiaSemana.choices, default=DiaSemana.LUNES)
+    hora = models.TimeField(default="09:00")
     descripcion = models.TextField()
     # Documentación visible para el usuario en formularios/admin
     duracion = models.PositiveIntegerField(help_text="Duración en minutos")

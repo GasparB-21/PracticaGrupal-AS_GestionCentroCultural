@@ -20,6 +20,7 @@
             letter-spacing: -1px; 
             color: #212529;
             margin-bottom: 1.5rem;
+            text-align: center;
         }
 
         .btn-volver {
@@ -54,12 +55,14 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             padding: 15px;
+            text-align: center;
         }
 
         .table tbody td {
             padding: 15px;
             vertical-align: middle;
             border-bottom: 1px solid #f0f2f5;
+            text-align: center;
         }
 
         .btn-action {
@@ -70,15 +73,34 @@
             transition: background 0.2s;
         }
         .btn-action:hover { background-color: #f8f9fa; }
+
+        .field-link {
+            color: #0d6efd;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        .field-link:hover { color: #0a58ca; }
+
+        /* Estilo para resaltar el nombre de la actividad en el título */
+        .text-actividad {
+            color: #0d6efd;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
     </style>
 </head>
 <body class="container">
 
     <a href="{% url 'listar_actividades' %}" class="btn-volver">
-        ← Volver a actividades
+        ← Volver al listado de actividades
     </a>
 
-    <h1>Usuarios inscritos en {{ actividad.nombre }}</h1>
+    <h1>
+        Usuarios inscritos en
+        <a href="{% url 'filtrar_actividad' actividad.id %}" class="text-actividad">
+            {{ actividad.nombre }}
+        </a>
+    </h1>
 
     {% if usuarios %}
         <div class="table-container shadow-sm">
@@ -97,7 +119,11 @@
                     {% for usuario in usuarios %}
                         <tr>
                             <td class="text-muted small">#{{ usuario.id }}</td>
-                            <td class="fw-bold">{{ usuario.nombre }}</td>
+                            <td>
+                                <a href="{% url 'filtrar_usuario' usuario.id %}" class="field-link fw-bold">
+                                    {{ usuario.nombre }}
+                                </a>
+                            </td>
                             <td class="text-center">{{ usuario.edad }}</td>
                             <td class="text-muted">{{ usuario.email }}</td>
                             <td>{{ usuario.telefono }}</td>

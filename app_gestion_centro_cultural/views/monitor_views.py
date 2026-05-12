@@ -49,9 +49,10 @@ def formulario_registro_monitor(request):
             form = MonitorForm()
 
     return render(request, 'app_gestion_centro_cultural/shared/formulario_registro.html', {
-        'titulo': 'Página de registro de monitores',
+        'titulo': 'Registrar un monitor',
         'form': form,
         'referer': referer,
+        'back_label': 'Volver al listado de monitores',
         'error_adapter': FormErrorAdapter(form),
     })
 
@@ -83,6 +84,7 @@ def editar_monitor_id(request, id):
         'titulo': 'Editar monitor',
         'form': form,
         'referer': referer,
+        'back_label': 'Volver al detalle del monitor',
         'error_adapter': FormErrorAdapter(form),
     })
 
