@@ -21,7 +21,6 @@ urlpatterns = [
     #MONITORES
     #Consulta de monitores
     path('monitores/', listar_monitores, name='listar_monitores'),
-    path('monitor/', listar_monitores, name='listar_monitor'),
     path('monitores/nuevo/', formulario_registro_monitor, name='registrar_monitores'),
     path('monitores/<int:id>/', filtrar_monitor_id, name='filtrar_monitor'),
     path('monitores/<int:id>/editar/', editar_monitor_id, name='editar_monitor'),
